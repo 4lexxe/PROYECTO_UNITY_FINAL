@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -15,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpLock;
     private float lastJumpTime; // Tiempo del último salto
     private bool isJumping; // Si está actualmente saltando
-    
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
@@ -36,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+
         moveX = Input.GetAxisRaw("Horizontal");
         if (moveX > 0) sr.flipX = false;
         else if (moveX < 0) sr.flipX = true;
@@ -85,6 +86,7 @@ public class PlayerMovement : MonoBehaviour
 
         anim.SetFloat("Speed", Mathf.Abs(moveX));
         anim.SetBool("isJumping", !isGrounded);
+
     }
 
     void FixedUpdate()
