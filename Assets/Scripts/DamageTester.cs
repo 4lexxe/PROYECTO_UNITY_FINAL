@@ -10,7 +10,7 @@ public class DamageTester : MonoBehaviour
 
     void Start()
     {
-        pc = FindObjectOfType<PlayerController>();
+
     }
 
     void Update()
