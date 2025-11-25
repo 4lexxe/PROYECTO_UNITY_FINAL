@@ -8,6 +8,7 @@ public class BarraVida : MonoBehaviour
 
     void Start()
     {
+        playerController = Object.FindFirstObjectByType<PlayerController>();
     }
 
     void Update()
