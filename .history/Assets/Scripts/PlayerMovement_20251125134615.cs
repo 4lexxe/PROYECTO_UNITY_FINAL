@@ -19,8 +19,6 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip sfxAttack0;
     public AudioClip sfxAttackAlt;
     public float sfxVolume = 1f;
-    public AudioClip sfxSlide;
-    public float sfxSlideVolume = 1f;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -33,9 +31,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
-    public float groundCheckDistance = 0.3f;
+    public float groundCheckDistance = 0.2f;
     public float airControlFactor = 0.7f;
-    public bool runFullSpeedInAir = true;
 
     private float moveX;
     private bool attackLock;
@@ -89,9 +86,19 @@ public class PlayerMovement : MonoBehaviour
         }
         // Detectar si está en el suelo
         Vector3 gcPos = groundCheck != null ? groundCheck.position : transform.position;
-        bool circle = Physics2D.OverlapCircle(gcPos, groundCheckRadius, groundLayer) != null;
-        bool ray = Physics2D.Raycast(gcPos, Vector2.down, groundCheckDistance, groundLayer).collider != null;
-        isGrounded = circle || ray;
+        var hit = Physics2D.Raycast(gcPos, Vector2.down, groundCheckDistance, groundLayer);
+        if (col != null)
+        {
+            isGrounded = col.IsTouchingLayers(groundLayer);
+            if (!isGrounded)
+            {
+                isGrounded = hit.collider != null || Physics2D.OverlapCircle(gcPos, groundCheckRadius, groundLayer);
+            }
+        }
+        else
+        {
+            isGrounded = hit.collider != null || Physics2D.OverlapCircle(gcPos, groundCheckRadius, groundLayer);
+        }
 
         // Verificar si ha pasado el tiempo suficiente desde el último salto
         bool canJump = (Time.time - lastJumpTime) >= jumpDuration;
@@ -182,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        float targetSpeed = (isGrounded || runFullSpeedInAir) ? speed : speed * airControlFactor;
+        float targetSpeed = isGrounded ? speed : speed * airControlFactor;
         float moveH;
         if (attackLock)
         {
@@ -278,10 +285,8 @@ public class PlayerMovement : MonoBehaviour
         slideLock = true;
         isSliding = true;
         slideEndTime = Time.time + slideDuration;
-        float boosted = Mathf.Max(slideSpeed, Mathf.Abs(rb.linearVelocity.x) * slideSpeedMultiplier);
-        slideBoost = boosted;
+        slideBoost = Mathf.Max(slideSpeed * slideSpeedMultiplier, Mathf.Abs(rb.linearVelocity.x) * slideSpeedMultiplier);
         rb.linearVelocity = new Vector2(slideDirection * slideBoost, rb.linearVelocity.y);
-        PlaySlideSound();
         if (TryCrossFade(slideStateName))
         {
             if (debugSlide) Debug.Log($"Slide CrossFade | state:{slideStateName} dir:{dir}");
@@ -320,12 +325,6 @@ public class PlayerMovement : MonoBehaviour
         if (stateName == attackLeftStateName) clip = sfxAttack0;
         else if (stateName == attackRightStateName) clip = sfxAttackAlt;
         if (clip != null) sfxSource.PlayOneShot(clip, Mathf.Clamp01(sfxVolume));
-    }
-
-    void PlaySlideSound()
-    {
-        if (sfxSource == null) return;
-        if (sfxSlide != null) sfxSource.PlayOneShot(sfxSlide, Mathf.Clamp01(sfxSlideVolume));
     }
 
     // Método para debug (opcional)

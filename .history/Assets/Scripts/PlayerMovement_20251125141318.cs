@@ -33,9 +33,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayer;
     public Transform groundCheck;
     public float groundCheckRadius = 0.1f;
-    public float groundCheckDistance = 0.3f;
+    public float groundCheckDistance = 0.2f;
     public float airControlFactor = 0.7f;
-    public bool runFullSpeedInAir = true;
 
     private float moveX;
     private bool attackLock;
@@ -89,9 +88,19 @@ public class PlayerMovement : MonoBehaviour
         }
         // Detectar si está en el suelo
         Vector3 gcPos = groundCheck != null ? groundCheck.position : transform.position;
-        bool circle = Physics2D.OverlapCircle(gcPos, groundCheckRadius, groundLayer) != null;
-        bool ray = Physics2D.Raycast(gcPos, Vector2.down, groundCheckDistance, groundLayer).collider != null;
-        isGrounded = circle || ray;
+        var hit = Physics2D.Raycast(gcPos, Vector2.down, groundCheckDistance, groundLayer);
+        if (col != null)
+        {
+            isGrounded = col.IsTouchingLayers(groundLayer);
+            if (!isGrounded)
+            {
+                isGrounded = hit.collider != null || Physics2D.OverlapCircle(gcPos, groundCheckRadius, groundLayer);
+            }
+        }
+        else
+        {
+            isGrounded = hit.collider != null || Physics2D.OverlapCircle(gcPos, groundCheckRadius, groundLayer);
+        }
 
         // Verificar si ha pasado el tiempo suficiente desde el último salto
         bool canJump = (Time.time - lastJumpTime) >= jumpDuration;
@@ -182,7 +191,7 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        float targetSpeed = (isGrounded || runFullSpeedInAir) ? speed : speed * airControlFactor;
+        float targetSpeed = isGrounded ? speed : speed * airControlFactor;
         float moveH;
         if (attackLock)
         {
