@@ -7,14 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpDuration = 1.0f; // Duración máxima del salto
     public float attackSpeedMultiplier = 1.6f;
     public string attackLeftStateName = "attack_0";
-    public string attackRightStateName = "attack_1";
-    public bool debugAttack = true;
-    public string slideStateName = "slide";
-    public string slideTrigger = "Slide";
-    public float slideDuration = 0.5f;
-    public float slideSpeed = 9f;
-    public bool debugSlide = true;
-    public float slideSpeedMultiplier = 1.8f;
+    public string attackRightStateName = "attack_2";
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -36,13 +29,6 @@ public class PlayerMovement : MonoBehaviour
     private string currentAttackStateName;
     private float attackEndTime;
     public float attackMaxDuration = 0.6f;
-    private bool attackDurationFromStateSet;
-    private int attackIndex;
-    private bool slideLock;
-    private bool isSliding;
-    private float slideEndTime;
-    private int slideDirection;
-    private float slideBoost;
 
     void Start()
     {
@@ -66,15 +52,7 @@ public class PlayerMovement : MonoBehaviour
         bool jumpUp = Input.GetButtonUp("Jump");
         bool leftDown = Input.GetMouseButtonDown(0);
         bool rightDown = Input.GetMouseButtonDown(1);
-        bool shiftDown = Input.GetKeyDown(KeyCode.LeftShift);
         
-        if (shiftDown && !slideLock && isGrounded && !isAttacking)
-        {
-            int dir = 0;
-            if (Mathf.Abs(moveX) > 0.01f) dir = moveX > 0 ? 1 : -1;
-            else dir = sr != null && sr.flipX ? -1 : 1;
-            StartSlide(dir);
-        }
         // Detectar si está en el suelo
         Vector3 gcPos = groundCheck != null ? groundCheck.position : transform.position;
         var hit = Physics2D.Raycast(gcPos, Vector2.down, groundCheckDistance, groundLayer);
@@ -121,58 +99,23 @@ public class PlayerMovement : MonoBehaviour
 
         if (leftDown && !attackLock)
         {
-            string chosen = (attackIndex % 2 == 0) ? attackLeftStateName : attackRightStateName;
-            attackIndex++;
-            if (debugAttack) Debug.Log($"Click Left | chosen:{chosen} idx:{attackIndex-1} anim:{(anim!=null)} ctrl:{(anim!=null && anim.runtimeAnimatorController!=null)}");
-            StartAttack(chosen);
+            StartAttack(attackLeftStateName);
+        }
+        if (rightDown && !attackLock)
+        {
+            StartAttack(attackRightStateName);
         }
 
         if (anim != null)
         {
             var st = anim.GetCurrentAnimatorStateInfo(0);
             bool isAttackState = st.IsName(attackLeftStateName) || st.IsName(attackRightStateName) || (!string.IsNullOrEmpty(currentAttackStateName) && st.IsName(currentAttackStateName));
-            bool isSlideState = st.IsName(slideStateName);
-            if (isAttacking && !isAttackState)
-            {
-                if (debugAttack) Debug.Log($"Attack End | by:leave name:{currentAttackStateName} norm:{st.normalizedTime:F2}");
-                isAttacking = false;
-                attackLock = false;
-                currentAttackStateName = null;
-                anim.speed = 1f;
-                attackDurationFromStateSet = false;
-            }
-            if (isAttacking && isAttackState && !attackDurationFromStateSet)
-            {
-                attackEndTime = Time.time + (st.length / Mathf.Max(0.0001f, anim.speed));
-                attackDurationFromStateSet = true;
-                if (debugAttack) Debug.Log($"Attack Duration | from state length:{st.length:F2} speed:{anim.speed:F2}");
-            }
             if (isAttacking && ((isAttackState && st.normalizedTime >= 1f) || Time.time >= attackEndTime))
             {
-                if (debugAttack) Debug.Log($"Attack End | by:{(isAttackState && st.normalizedTime >= 1f ? "state" : "timeout")} name:{currentAttackStateName} norm:{st.normalizedTime:F2}");
                 isAttacking = false;
                 attackLock = false;
                 currentAttackStateName = null;
                 anim.speed = 1f;
-                attackDurationFromStateSet = false;
-            }
-
-            if (isSliding)
-            {
-                if (isSlideState && st.normalizedTime >= 1f)
-                {
-                    if (debugSlide) Debug.Log($"Slide End | by:state norm:{st.normalizedTime:F2}");
-                    isSliding = false;
-                    slideLock = false;
-                    slideEndTime = 0f;
-                }
-                else if (!isSlideState || Time.time >= slideEndTime)
-                {
-                    if (debugSlide) Debug.Log($"Slide End | by:{(!isSlideState ? "leave" : "timeout")} norm:{st.normalizedTime:F2}");
-                    isSliding = false;
-                    slideLock = false;
-                    slideEndTime = 0f;
-                }
             }
         }
 
@@ -181,19 +124,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         float targetSpeed = isGrounded ? speed : speed * airControlFactor;
-        float moveH;
-        if (attackLock)
-        {
-            moveH = 0f;
-        }
-        else if (isSliding)
-        {
-            moveH = slideDirection * slideBoost;
-        }
-        else
-        {
-            moveH = moveX * targetSpeed;
-        }
+        float moveH = attackLock ? 0f : moveX * targetSpeed;
         rb.linearVelocity = new Vector2(moveH, rb.linearVelocity.y);
         
         if (jumpPressed && isGrounded)
@@ -210,7 +141,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (anim == null || anim.runtimeAnimatorController == null)
         {
-            if (debugAttack) Debug.Log("StartAttack abort | Animator o Controller nulo");
             attackLock = false;
             isAttacking = false;
             currentAttackStateName = null;
@@ -218,81 +148,21 @@ public class PlayerMovement : MonoBehaviour
         }
         attackLock = true;
         isAttacking = true;
+        currentAttackStateName = stateName;
         anim.speed = attackSpeedMultiplier;
-        if (TryCrossFade(stateName))
-        {
-            currentAttackStateName = stateName;
-            attackEndTime = Time.time + attackMaxDuration;
-            if (debugAttack) Debug.Log($"CrossFade OK | state:{stateName}");
-            attackDurationFromStateSet = false;
-            return;
-        }
         string trigger = stateName == attackLeftStateName ? "AttackLeft" : "AttackRight";
         if (HasAnimatorParameter(trigger))
         {
             anim.ResetTrigger(trigger);
             anim.SetTrigger(trigger);
             attackEndTime = Time.time + attackMaxDuration;
-            currentAttackStateName = stateName;
-            if (debugAttack) Debug.Log($"Trigger OK | trigger:{trigger} -> state:{stateName}");
-            attackDurationFromStateSet = false;
         }
         else
         {
-            if (debugAttack) Debug.Log($"StartAttack FAIL | missing trigger:{trigger} and state:{stateName}");
             attackLock = false;
             isAttacking = false;
             currentAttackStateName = null;
             anim.speed = 1f;
-            attackDurationFromStateSet = false;
-        }
-    }
-
-    bool TryCrossFade(string stateName)
-    {
-        if (anim.runtimeAnimatorController == null || anim.layerCount <= 0) return false;
-        int hash = Animator.StringToHash(stateName);
-        if (anim.HasState(0, hash))
-        {
-            anim.CrossFadeInFixedTime(stateName, 0f);
-            return true;
-        }
-        if (debugAttack) Debug.Log($"CrossFade FAIL | state not found:{stateName}");
-        return false;
-    }
-
-    void StartSlide(int dir)
-    {
-        if (anim == null || anim.runtimeAnimatorController == null)
-        {
-            slideLock = false;
-            isSliding = false;
-            slideEndTime = 0f;
-            return;
-        }
-        slideDirection = dir;
-        slideLock = true;
-        isSliding = true;
-        slideEndTime = Time.time + slideDuration;
-        slideBoost = Mathf.Max(slideSpeed * slideSpeedMultiplier, Mathf.Abs(rb.linearVelocity.x) * slideSpeedMultiplier);
-        rb.linearVelocity = new Vector2(slideDirection * slideBoost, rb.linearVelocity.y);
-        if (TryCrossFade(slideStateName))
-        {
-            if (debugSlide) Debug.Log($"Slide CrossFade | state:{slideStateName} dir:{dir}");
-            return;
-        }
-        if (HasAnimatorParameter(slideTrigger))
-        {
-            anim.ResetTrigger(slideTrigger);
-            anim.SetTrigger(slideTrigger);
-            if (debugSlide) Debug.Log($"Slide Trigger | trigger:{slideTrigger} dir:{dir}");
-        }
-        else
-        {
-            if (debugSlide) Debug.Log("Slide FAIL | missing state and trigger");
-            isSliding = false;
-            slideLock = false;
-            slideEndTime = 0f;
         }
     }
 
@@ -317,7 +187,5 @@ public class PlayerMovement : MonoBehaviour
         GUI.Label(new Rect(10, 10, 300, 30), $"Tiempo desde último salto: {Time.time - lastJumpTime:F2}", style);
         GUI.Label(new Rect(10, 40, 300, 30), $"Puede saltar: {(Time.time - lastJumpTime) >= jumpDuration}", style);
         GUI.Label(new Rect(10, 70, 300, 30), $"En suelo: {isGrounded}", style);
-        GUI.Label(new Rect(10, 100, 380, 30), $"Ataque: lock={attackLock} atk={isAttacking} state={currentAttackStateName}", style);
-        GUI.Label(new Rect(10, 130, 380, 30), $"Animator: {(anim!=null)} ctrl:{(anim!=null && anim.runtimeAnimatorController!=null)}", style);
     }
 }

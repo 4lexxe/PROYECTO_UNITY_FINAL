@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpDuration = 1.0f; // Duración máxima del salto
     public float attackSpeedMultiplier = 1.6f;
     public string attackLeftStateName = "attack_0";
-    public string attackRightStateName = "attack_1";
+    public string attackRightStateName = "attack_2";
     public bool debugAttack = true;
     public string slideStateName = "slide";
     public string slideTrigger = "Slide";
@@ -42,7 +42,6 @@ public class PlayerMovement : MonoBehaviour
     private bool isSliding;
     private float slideEndTime;
     private int slideDirection;
-    private float slideBoost;
 
     void Start()
     {
@@ -188,17 +187,18 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (isSliding)
         {
-            moveH = slideDirection * slideBoost;
+            float boosted = Mathf.Max(slideSpeed, Mathf.Abs(rb.velocity.x) * slideSpeedMultiplier);
+            moveH = slideDirection * boosted;
         }
         else
         {
             moveH = moveX * targetSpeed;
         }
-        rb.linearVelocity = new Vector2(moveH, rb.linearVelocity.y);
+        rb.velocity = new Vector2(moveH, rb.velocity.y);
         
         if (jumpPressed && isGrounded)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
         
         jumpPressed = false;
@@ -274,8 +274,8 @@ public class PlayerMovement : MonoBehaviour
         slideLock = true;
         isSliding = true;
         slideEndTime = Time.time + slideDuration;
-        slideBoost = Mathf.Max(slideSpeed * slideSpeedMultiplier, Mathf.Abs(rb.linearVelocity.x) * slideSpeedMultiplier);
-        rb.linearVelocity = new Vector2(slideDirection * slideBoost, rb.linearVelocity.y);
+        float boosted = Mathf.Max(slideSpeed, Mathf.Abs(rb.velocity.x) * slideSpeedMultiplier);
+        rb.velocity = new Vector2(slideDirection * boosted, rb.velocity.y);
         if (TryCrossFade(slideStateName))
         {
             if (debugSlide) Debug.Log($"Slide CrossFade | state:{slideStateName} dir:{dir}");

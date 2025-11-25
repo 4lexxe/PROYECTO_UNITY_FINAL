@@ -7,14 +7,13 @@ public class PlayerMovement : MonoBehaviour
     public float jumpDuration = 1.0f; // Duración máxima del salto
     public float attackSpeedMultiplier = 1.6f;
     public string attackLeftStateName = "attack_0";
-    public string attackRightStateName = "attack_1";
+    public string attackRightStateName = "attack_2";
     public bool debugAttack = true;
     public string slideStateName = "slide";
     public string slideTrigger = "Slide";
     public float slideDuration = 0.5f;
     public float slideSpeed = 9f;
     public bool debugSlide = true;
-    public float slideSpeedMultiplier = 1.8f;
 
     private Rigidbody2D rb;
     private Animator anim;
@@ -42,7 +41,6 @@ public class PlayerMovement : MonoBehaviour
     private bool isSliding;
     private float slideEndTime;
     private int slideDirection;
-    private float slideBoost;
 
     void Start()
     {
@@ -68,13 +66,6 @@ public class PlayerMovement : MonoBehaviour
         bool rightDown = Input.GetMouseButtonDown(1);
         bool shiftDown = Input.GetKeyDown(KeyCode.LeftShift);
         
-        if (shiftDown && !slideLock && isGrounded && !isAttacking)
-        {
-            int dir = 0;
-            if (Mathf.Abs(moveX) > 0.01f) dir = moveX > 0 ? 1 : -1;
-            else dir = sr != null && sr.flipX ? -1 : 1;
-            StartSlide(dir);
-        }
         // Detectar si está en el suelo
         Vector3 gcPos = groundCheck != null ? groundCheck.position : transform.position;
         var hit = Physics2D.Raycast(gcPos, Vector2.down, groundCheckDistance, groundLayer);
@@ -188,7 +179,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (isSliding)
         {
-            moveH = slideDirection * slideBoost;
+            moveH = slideDirection * slideSpeed;
         }
         else
         {
@@ -274,8 +265,6 @@ public class PlayerMovement : MonoBehaviour
         slideLock = true;
         isSliding = true;
         slideEndTime = Time.time + slideDuration;
-        slideBoost = Mathf.Max(slideSpeed * slideSpeedMultiplier, Mathf.Abs(rb.linearVelocity.x) * slideSpeedMultiplier);
-        rb.linearVelocity = new Vector2(slideDirection * slideBoost, rb.linearVelocity.y);
         if (TryCrossFade(slideStateName))
         {
             if (debugSlide) Debug.Log($"Slide CrossFade | state:{slideStateName} dir:{dir}");
@@ -321,3 +310,10 @@ public class PlayerMovement : MonoBehaviour
         GUI.Label(new Rect(10, 130, 380, 30), $"Animator: {(anim!=null)} ctrl:{(anim!=null && anim.runtimeAnimatorController!=null)}", style);
     }
 }
+        if (shiftDown && !slideLock && isGrounded && !isAttacking)
+        {
+            int dir = 0;
+            if (Mathf.Abs(moveX) > 0.01f) dir = moveX > 0 ? 1 : -1;
+            else dir = sr != null && sr.flipX ? -1 : 1;
+            StartSlide(dir);
+        }

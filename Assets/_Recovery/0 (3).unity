@@ -6567,13 +6567,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.12441942, y: 0.041458998, z: -0.7965409}
+  m_LocalRotation: {x: 0.042477038, y: -0, z: -0, w: 0.99909747}
+  m_LocalPosition: {x: 0.12441942, y: 0.16, z: -0.7965409}
   m_LocalScale: {x: 0.25815612, y: 0.25815612, z: 0.25815612}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1416129236}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 4.869, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11484,6 +11484,16 @@ MonoBehaviour:
   speed: 3.5
   jumpForce: 5
   jumpDuration: 1
+  attackSpeedMultiplier: 1.6
+  attackLeftStateName: Attack_0
+  attackRightStateName: Attack_2
+  debugAttack: 1
+  slideStateName: slide
+  slideTrigger: Slide
+  slideDuration: 0.5
+  slideSpeed: 2
+  debugSlide: 1
+  slideSpeedMultiplier: 1.8
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -11491,6 +11501,7 @@ MonoBehaviour:
   groundCheckRadius: 0.1
   groundCheckDistance: 0.1
   airControlFactor: 0.7
+  attackMaxDuration: 0.6
 --- !u!50 &1416129240
 Rigidbody2D:
   serializedVersion: 5
@@ -12123,7 +12134,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 24.599976, y: -12.100006}
+  m_AnchoredPosition: {x: 24.599976, y: -12.099976}
   m_SizeDelta: {x: 209.0883, y: 32.375}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1604989270

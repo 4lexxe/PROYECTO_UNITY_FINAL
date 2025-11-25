@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpDuration = 1.0f; // Duración máxima del salto
     public float attackSpeedMultiplier = 1.6f;
     public string attackLeftStateName = "attack_0";
-    public string attackRightStateName = "attack_1";
+    public string attackRightStateName = "attack_2";
     public bool debugAttack = true;
     public string slideStateName = "slide";
     public string slideTrigger = "Slide";
