@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: -1151622186891590660}
   - component: {fileID: 230986873019897611}
   - component: {fileID: 4275547029949387867}
+  - component: {fileID: 6985587459987310133}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Untagged
@@ -272,3 +273,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFloat
   floatAmplitude: 0.3
   floatSpeed: 3
+--- !u!114 &6985587459987310133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6704626237833283523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5f2626273ecc247b44d9c5df1516fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySimple
+  speed: 2
+  aggroRange: 12
+  attackRange: 1.6
+  attackCooldown: 1
+  attackTriggerName: Attack
+  speedParamName: Speed
+  projectilePrefab: {fileID: 2015231011749334166, guid: 688b97075d71d384cb79bd05d7916462, type: 3}
+  firePoint: {fileID: 0}
+  shootRange: 8
+  fireRate: 1.5
+  projectileSpeed: 8
+  fireOffset: {x: 0.5, y: 0.3}
+  maxHealth: 3
+  damageFromPlayer: 1

@@ -4,6 +4,7 @@ public class DamageTester : MonoBehaviour
 {
     public float intervaloDanio = 1f;
     public float cantidadDanio = 1f;
+    public bool autoDamage = false;
 
     private float tiempo;
     private PlayerController pc;
@@ -15,6 +16,7 @@ public class DamageTester : MonoBehaviour
 
     void Update()
     {
+        if (!autoDamage) return;
         tiempo += Time.deltaTime;
 
         if (tiempo >= intervaloDanio)
