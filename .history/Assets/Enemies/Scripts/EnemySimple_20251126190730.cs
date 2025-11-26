@@ -33,8 +33,6 @@ public class EnemySimple : MonoBehaviour
     public Color laserColor = new Color(1f, 0f, 0f, 1f);
     public float flyHighOffset = 3.0f;
     public float flyLowOffset = 0.8f;
-    public float laserSwitchDistance = 6f;
-    public bool laserAtLongRange = true;
     public int projectileDamage = 1;
     public int maxHealth = 3;
     public int damageFromPlayer = 1;
@@ -44,6 +42,8 @@ public class EnemySimple : MonoBehaviour
     public Color healthColorFull = new Color(0.1f, 1f, 0.1f, 1f);
     public Color healthColorEmpty = new Color(1f, 0.1f, 0.1f, 1f);
     public Color healthBackgroundColor = new Color(0f, 0f, 0f, 0.6f);
+    public int maxHealth = 3;
+    public int damageFromPlayer = 1;
     private Transform player;
     private Animator anim;
     private SpriteRenderer sr;
@@ -228,41 +228,27 @@ public class EnemySimple : MonoBehaviour
         hpRoot = new GameObject("HPBar").transform;
         hpRoot.SetParent(transform);
         hpRoot.localPosition = new Vector3(-healthBarSize.x * 0.5f + healthBarOffset.x, healthBarOffset.y, 0f);
-        var backGo = new GameObject("HPBarBack");
-        backGo.transform.SetParent(hpRoot);
-        backGo.transform.localPosition = Vector3.zero;
-        hpBack = backGo.AddComponent<LineRenderer>();
+        hpBack = hpRoot.gameObject.AddComponent<LineRenderer>();
         hpBack.useWorldSpace = false;
         hpBack.positionCount = 2;
         hpBack.startWidth = healthBarSize.y;
         hpBack.endWidth = healthBarSize.y;
-        var backShader = Shader.Find("Sprites/Default");
-        if (backShader != null)
-        {
-            var backMat = new Material(backShader);
-            backMat.color = healthBackgroundColor;
-            hpBack.material = backMat;
-        }
+        var backMat = new Material(Shader.Find("Sprites/Default"));
+        backMat.color = healthBackgroundColor;
+        hpBack.material = backMat;
         hpBack.startColor = healthBackgroundColor;
         hpBack.endColor = healthBackgroundColor;
         hpBack.sortingOrder = 1000;
         hpBack.SetPosition(0, Vector3.zero);
         hpBack.SetPosition(1, new Vector3(healthBarSize.x, 0f, 0f));
-        var fillGo = new GameObject("HPBarFill");
-        fillGo.transform.SetParent(hpRoot);
-        fillGo.transform.localPosition = Vector3.zero;
-        hpLine = fillGo.AddComponent<LineRenderer>();
+        hpLine = hpRoot.gameObject.AddComponent<LineRenderer>();
         hpLine.useWorldSpace = false;
         hpLine.positionCount = 2;
         hpLine.startWidth = healthBarSize.y * 0.9f;
         hpLine.endWidth = healthBarSize.y * 0.9f;
-        var lineShader = Shader.Find("Sprites/Default");
-        if (lineShader != null)
-        {
-            var lineMat = new Material(lineShader);
-            lineMat.color = healthColorFull;
-            hpLine.material = lineMat;
-        }
+        var lineMat = new Material(Shader.Find("Sprites/Default"));
+        lineMat.color = healthColorFull;
+        hpLine.material = lineMat;
         hpLine.sortingOrder = 1001;
         UpdateHealthBar();
     }

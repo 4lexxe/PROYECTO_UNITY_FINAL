@@ -38,12 +38,6 @@ public class EnemySimple : MonoBehaviour
     public int projectileDamage = 1;
     public int maxHealth = 3;
     public int damageFromPlayer = 1;
-    public bool showHealthBar = true;
-    public Vector2 healthBarSize = new Vector2(1.2f, 0.12f);
-    public Vector2 healthBarOffset = new Vector2(0f, 1.1f);
-    public Color healthColorFull = new Color(0.1f, 1f, 0.1f, 1f);
-    public Color healthColorEmpty = new Color(1f, 0.1f, 0.1f, 1f);
-    public Color healthBackgroundColor = new Color(0f, 0f, 0f, 0.6f);
     private Transform player;
     private Animator anim;
     private SpriteRenderer sr;
@@ -51,9 +45,6 @@ public class EnemySimple : MonoBehaviour
     private float lastShot;
     private Rigidbody2D rb;
     private int health;
-    private Transform hpRoot;
-    private LineRenderer hpBack;
-    private LineRenderer hpLine;
 
     void Start()
     {
@@ -72,7 +63,6 @@ public class EnemySimple : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         health = maxHealth;
         if (CompareTag("Flying_eye")) isFlyingType = true;
-        if (showHealthBar) InitHealthBar();
     }
 
     void Update()
@@ -180,7 +170,7 @@ public class EnemySimple : MonoBehaviour
             if (rbp == null) rbp = proj.AddComponent<Rigidbody2D>();
             rbp.bodyType = RigidbodyType2D.Dynamic;
             rbp.gravityScale = 0f;
-            rbp.linearVelocity = dir * projectileSpeed;
+            rbp.velocity = dir * projectileSpeed;
             if (rotateProjectileToDirection)
             {
                 float ang = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -222,62 +212,6 @@ public class EnemySimple : MonoBehaviour
         Destroy(go, laserDuration);
     }
 
-    void InitHealthBar()
-    {
-        if (hpRoot != null) return;
-        hpRoot = new GameObject("HPBar").transform;
-        hpRoot.SetParent(transform);
-        hpRoot.localPosition = new Vector3(-healthBarSize.x * 0.5f + healthBarOffset.x, healthBarOffset.y, 0f);
-        var backGo = new GameObject("HPBarBack");
-        backGo.transform.SetParent(hpRoot);
-        backGo.transform.localPosition = Vector3.zero;
-        hpBack = backGo.AddComponent<LineRenderer>();
-        hpBack.useWorldSpace = false;
-        hpBack.positionCount = 2;
-        hpBack.startWidth = healthBarSize.y;
-        hpBack.endWidth = healthBarSize.y;
-        var backShader = Shader.Find("Sprites/Default");
-        if (backShader != null)
-        {
-            var backMat = new Material(backShader);
-            backMat.color = healthBackgroundColor;
-            hpBack.material = backMat;
-        }
-        hpBack.startColor = healthBackgroundColor;
-        hpBack.endColor = healthBackgroundColor;
-        hpBack.sortingOrder = 1000;
-        hpBack.SetPosition(0, Vector3.zero);
-        hpBack.SetPosition(1, new Vector3(healthBarSize.x, 0f, 0f));
-        var fillGo = new GameObject("HPBarFill");
-        fillGo.transform.SetParent(hpRoot);
-        fillGo.transform.localPosition = Vector3.zero;
-        hpLine = fillGo.AddComponent<LineRenderer>();
-        hpLine.useWorldSpace = false;
-        hpLine.positionCount = 2;
-        hpLine.startWidth = healthBarSize.y * 0.9f;
-        hpLine.endWidth = healthBarSize.y * 0.9f;
-        var lineShader = Shader.Find("Sprites/Default");
-        if (lineShader != null)
-        {
-            var lineMat = new Material(lineShader);
-            lineMat.color = healthColorFull;
-            hpLine.material = lineMat;
-        }
-        hpLine.sortingOrder = 1001;
-        UpdateHealthBar();
-    }
-
-    void UpdateHealthBar()
-    {
-        if (!showHealthBar || hpLine == null) return;
-        float pct = Mathf.Clamp01((float)health / Mathf.Max(1, maxHealth));
-        hpLine.SetPosition(0, Vector3.zero);
-        hpLine.SetPosition(1, new Vector3(healthBarSize.x * pct, 0f, 0f));
-        var col = Color.Lerp(healthColorEmpty, healthColorFull, pct);
-        hpLine.startColor = col;
-        hpLine.endColor = col;
-    }
-
     void UpdateFacing(float dir)
     {
         if (sr != null) sr.flipX = dir < 0f;
@@ -293,7 +227,7 @@ public class EnemySimple : MonoBehaviour
             Vector2 dir = (player.position - origin);
             if (dir.sqrMagnitude < 0.0001f) dir = Vector2.right;
             dir.Normalize();
-            rbp.linearVelocity = dir * projectileSpeed;
+            rbp.velocity = dir * projectileSpeed;
             if (rotateProjectileToDirection)
             {
                 float ang = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -321,7 +255,7 @@ public class EnemySimple : MonoBehaviour
         var rbp = go.AddComponent<Rigidbody2D>();
         rbp.bodyType = RigidbodyType2D.Dynamic;
         rbp.gravityScale = 0f;
-        rbp.linearVelocity = dir.normalized * projectileSpeed;
+        rbp.velocity = dir.normalized * projectileSpeed;
         go.transform.localScale = Vector3.one * simpleProjectileSize;
         if (rotateProjectileToDirection)
         {
@@ -359,10 +293,9 @@ public class EnemySimple : MonoBehaviour
         return false;
     }
 
-    public void TakeDamage(int amount)
+    void TakeDamage(int amount)
     {
-        health = Mathf.Max(0, health - amount);
-        UpdateHealthBar();
+        health -= amount;
         if (health <= 0) Die();
     }
 
@@ -380,7 +313,6 @@ public class EnemySimple : MonoBehaviour
                 }
             }
         }
-        if (hpRoot != null) Destroy(hpRoot.gameObject);
         Destroy(gameObject);
     }
 }

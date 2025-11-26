@@ -50,7 +50,7 @@ GameObject:
   - component: {fileID: 6985587459987310133}
   m_Layer: 0
   m_Name: Enemy1
-  m_TagString: Untagged
+  m_TagString: Flying_eye
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -240,7 +240,7 @@ MonoBehaviour:
   moveSpeed: 2
   stopDistance: 5
   attackCooldown: 2
-  projectilePrefab: {fileID: 2015231011749334166, guid: 755448d8f2956a346804c4a9014fd633, type: 3}
+  projectilePrefab: {fileID: 0}
   shootPoint: {fileID: 146929904296301427}
   projectileSpeed: 10
 --- !u!114 &230986873019897611
@@ -297,5 +297,33 @@ MonoBehaviour:
   fireRate: 1.5
   projectileSpeed: 8
   fireOffset: {x: 0.5, y: 0.3}
+  projectileScale: 1
+  rotateProjectileToDirection: 1
+  isFlyingType: 1
+  hoverAmplitude: 1
+  hoverFrequency: 2
+  hoverYOffset: 1
+  projectileHoming: 1
+  homingDuration: 3
+  useSimpleProjectile: 1
+  simpleProjectileLifetime: 4
+  simpleProjectileSize: 0.6
+  simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
+  useLaserForFlying: 1
+  laserDamage: 1
+  laserWidth: 0.06
+  laserDuration: 0.2
+  laserColor: {r: 1, g: 0, b: 0, a: 1}
+  flyHighOffset: 3
+  flyLowOffset: 0.8
+  laserSwitchDistance: 6
+  laserAtLongRange: 1
+  projectileDamage: 1
   maxHealth: 3
   damageFromPlayer: 1
+  showHealthBar: 1
+  healthBarSize: {x: 1.2, y: 0.12}
+  healthBarOffset: {x: 0, y: 1.1}
+  healthColorFull: {r: 0.1, g: 1, b: 0.1, a: 1}
+  healthColorEmpty: {r: 1, g: 0.1, b: 0.1, a: 1}
+  healthBackgroundColor: {r: 0, g: 0, b: 0, a: 0.6}

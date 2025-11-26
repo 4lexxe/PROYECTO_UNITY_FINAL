@@ -12,7 +12,7 @@ public class EnemySimple : MonoBehaviour
     public Transform firePoint;
     public float shootRange = 8f;
     public float fireRate = 1.5f;
-    public float projectileSpeed = 6f;
+    public float projectileSpeed = 8f;
     public Vector2 fireOffset = new Vector2(0.5f, 0.3f);
     public float projectileScale = 1f;
     public bool rotateProjectileToDirection = true;
@@ -26,24 +26,9 @@ public class EnemySimple : MonoBehaviour
     public float simpleProjectileLifetime = 4f;
     public float simpleProjectileSize = 0.6f;
     public Color simpleProjectileColor = new Color(1f, 0f, 0f, 1f);
-    public bool useLaserForFlying = true;
-    public int laserDamage = 1;
-    public float laserWidth = 0.06f;
-    public float laserDuration = 0.2f;
-    public Color laserColor = new Color(1f, 0f, 0f, 1f);
-    public float flyHighOffset = 3.0f;
-    public float flyLowOffset = 0.8f;
-    public float laserSwitchDistance = 6f;
-    public bool laserAtLongRange = true;
     public int projectileDamage = 1;
     public int maxHealth = 3;
     public int damageFromPlayer = 1;
-    public bool showHealthBar = true;
-    public Vector2 healthBarSize = new Vector2(1.2f, 0.12f);
-    public Vector2 healthBarOffset = new Vector2(0f, 1.1f);
-    public Color healthColorFull = new Color(0.1f, 1f, 0.1f, 1f);
-    public Color healthColorEmpty = new Color(1f, 0.1f, 0.1f, 1f);
-    public Color healthBackgroundColor = new Color(0f, 0f, 0f, 0.6f);
     private Transform player;
     private Animator anim;
     private SpriteRenderer sr;
@@ -51,9 +36,6 @@ public class EnemySimple : MonoBehaviour
     private float lastShot;
     private Rigidbody2D rb;
     private int health;
-    private Transform hpRoot;
-    private LineRenderer hpBack;
-    private LineRenderer hpLine;
 
     void Start()
     {
@@ -72,7 +54,6 @@ public class EnemySimple : MonoBehaviour
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         health = maxHealth;
         if (CompareTag("Flying_eye")) isFlyingType = true;
-        if (showHealthBar) InitHealthBar();
     }
 
     void Update()
@@ -80,7 +61,7 @@ public class EnemySimple : MonoBehaviour
         if (player == null) return;
         Vector3 self = transform.position;
         Vector3 target = isFlyingType
-            ? new Vector3(player.position.x, Mathf.Lerp(player.position.y + flyLowOffset, player.position.y + flyHighOffset, Mathf.PingPong(Time.time * hoverFrequency, 1f)), self.z)
+            ? new Vector3(player.position.x, player.position.y + hoverYOffset + Mathf.Sin(Time.time * hoverFrequency) * hoverAmplitude, self.z)
             : new Vector3(player.position.x, self.y, self.z);
         float dist = Vector2.Distance(self, player.position);
         float dir = Mathf.Sign(target.x - self.x);
@@ -96,15 +77,7 @@ public class EnemySimple : MonoBehaviour
             if (anim != null && HasParam(speedParamName, AnimatorControllerParameterType.Float)) anim.SetFloat(speedParamName, Mathf.Abs(dir) * speed);
             if (dist <= shootRange && Time.time - lastShot >= fireRate)
             {
-                if (isFlyingType && useLaserForFlying)
-                {
-                    bool useLaser = laserAtLongRange ? dist >= laserSwitchDistance : dist <= laserSwitchDistance;
-                    if (useLaser) ShootLaserAtPlayer(); else ShootAtPlayer();
-                }
-                else
-                {
-                    ShootAtPlayer();
-                }
+                ShootAtPlayer();
                 lastShot = Time.time;
             }
             return;
@@ -117,15 +90,7 @@ public class EnemySimple : MonoBehaviour
             if (anim != null && HasParam(speedParamName, AnimatorControllerParameterType.Float)) anim.SetFloat(speedParamName, 0f);
             if (dist <= shootRange && Time.time - lastShot >= fireRate)
             {
-                if (isFlyingType && useLaserForFlying)
-                {
-                    bool useLaser = laserAtLongRange ? dist >= laserSwitchDistance : dist <= laserSwitchDistance;
-                    if (useLaser) ShootLaserAtPlayer(); else ShootAtPlayer();
-                }
-                else
-                {
-                    ShootAtPlayer();
-                }
+                ShootAtPlayer();
                 lastShot = Time.time;
             }
         }
@@ -180,7 +145,7 @@ public class EnemySimple : MonoBehaviour
             if (rbp == null) rbp = proj.AddComponent<Rigidbody2D>();
             rbp.bodyType = RigidbodyType2D.Dynamic;
             rbp.gravityScale = 0f;
-            rbp.linearVelocity = dir * projectileSpeed;
+            rbp.velocity = dir * projectileSpeed;
             if (rotateProjectileToDirection)
             {
                 float ang = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -189,93 +154,6 @@ public class EnemySimple : MonoBehaviour
         }
         if (projectileHoming && proj != null) StartCoroutine(Homing(proj));
         if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
-    }
-
-    void ShootLaserAtPlayer()
-    {
-        if (player == null) return;
-        Vector3 origin = transform.position;
-        if (firePoint != null) origin = firePoint.position;
-        Vector2 dir = (player.position - origin);
-        if (dir.sqrMagnitude < 0.0001f) dir = Vector2.right;
-        dir.Normalize();
-        var hit = Physics2D.Raycast(origin, dir, 100f);
-        Vector3 end = hit.collider != null ? (Vector3)hit.point : origin + (Vector3)(dir * 100f);
-        var go = new GameObject("Laser");
-        var lr = go.AddComponent<LineRenderer>();
-        lr.positionCount = 2;
-        lr.useWorldSpace = true;
-        lr.startWidth = laserWidth;
-        lr.endWidth = laserWidth;
-        var mat = new Material(Shader.Find("Sprites/Default"));
-        mat.color = laserColor;
-        lr.material = mat;
-        lr.startColor = laserColor;
-        lr.endColor = laserColor;
-        lr.SetPosition(0, origin);
-        lr.SetPosition(1, end);
-        if (hit.collider != null && hit.collider.CompareTag("Player"))
-        {
-            var pc = hit.collider.GetComponent<PlayerController>();
-            if (pc != null) pc.RecibirDanio(laserDamage);
-        }
-        Destroy(go, laserDuration);
-    }
-
-    void InitHealthBar()
-    {
-        if (hpRoot != null) return;
-        hpRoot = new GameObject("HPBar").transform;
-        hpRoot.SetParent(transform);
-        hpRoot.localPosition = new Vector3(-healthBarSize.x * 0.5f + healthBarOffset.x, healthBarOffset.y, 0f);
-        var backGo = new GameObject("HPBarBack");
-        backGo.transform.SetParent(hpRoot);
-        backGo.transform.localPosition = Vector3.zero;
-        hpBack = backGo.AddComponent<LineRenderer>();
-        hpBack.useWorldSpace = false;
-        hpBack.positionCount = 2;
-        hpBack.startWidth = healthBarSize.y;
-        hpBack.endWidth = healthBarSize.y;
-        var backShader = Shader.Find("Sprites/Default");
-        if (backShader != null)
-        {
-            var backMat = new Material(backShader);
-            backMat.color = healthBackgroundColor;
-            hpBack.material = backMat;
-        }
-        hpBack.startColor = healthBackgroundColor;
-        hpBack.endColor = healthBackgroundColor;
-        hpBack.sortingOrder = 1000;
-        hpBack.SetPosition(0, Vector3.zero);
-        hpBack.SetPosition(1, new Vector3(healthBarSize.x, 0f, 0f));
-        var fillGo = new GameObject("HPBarFill");
-        fillGo.transform.SetParent(hpRoot);
-        fillGo.transform.localPosition = Vector3.zero;
-        hpLine = fillGo.AddComponent<LineRenderer>();
-        hpLine.useWorldSpace = false;
-        hpLine.positionCount = 2;
-        hpLine.startWidth = healthBarSize.y * 0.9f;
-        hpLine.endWidth = healthBarSize.y * 0.9f;
-        var lineShader = Shader.Find("Sprites/Default");
-        if (lineShader != null)
-        {
-            var lineMat = new Material(lineShader);
-            lineMat.color = healthColorFull;
-            hpLine.material = lineMat;
-        }
-        hpLine.sortingOrder = 1001;
-        UpdateHealthBar();
-    }
-
-    void UpdateHealthBar()
-    {
-        if (!showHealthBar || hpLine == null) return;
-        float pct = Mathf.Clamp01((float)health / Mathf.Max(1, maxHealth));
-        hpLine.SetPosition(0, Vector3.zero);
-        hpLine.SetPosition(1, new Vector3(healthBarSize.x * pct, 0f, 0f));
-        var col = Color.Lerp(healthColorEmpty, healthColorFull, pct);
-        hpLine.startColor = col;
-        hpLine.endColor = col;
     }
 
     void UpdateFacing(float dir)
@@ -293,7 +171,7 @@ public class EnemySimple : MonoBehaviour
             Vector2 dir = (player.position - origin);
             if (dir.sqrMagnitude < 0.0001f) dir = Vector2.right;
             dir.Normalize();
-            rbp.linearVelocity = dir * projectileSpeed;
+            rbp.velocity = dir * projectileSpeed;
             if (rotateProjectileToDirection)
             {
                 float ang = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -321,7 +199,7 @@ public class EnemySimple : MonoBehaviour
         var rbp = go.AddComponent<Rigidbody2D>();
         rbp.bodyType = RigidbodyType2D.Dynamic;
         rbp.gravityScale = 0f;
-        rbp.linearVelocity = dir.normalized * projectileSpeed;
+        rbp.velocity = dir.normalized * projectileSpeed;
         go.transform.localScale = Vector3.one * simpleProjectileSize;
         if (rotateProjectileToDirection)
         {
@@ -359,10 +237,9 @@ public class EnemySimple : MonoBehaviour
         return false;
     }
 
-    public void TakeDamage(int amount)
+    void TakeDamage(int amount)
     {
-        health = Mathf.Max(0, health - amount);
-        UpdateHealthBar();
+        health -= amount;
         if (health <= 0) Die();
     }
 
@@ -380,7 +257,6 @@ public class EnemySimple : MonoBehaviour
                 }
             }
         }
-        if (hpRoot != null) Destroy(hpRoot.gameObject);
         Destroy(gameObject);
     }
 }
