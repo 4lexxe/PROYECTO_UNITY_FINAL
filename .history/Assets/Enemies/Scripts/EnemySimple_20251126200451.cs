@@ -31,8 +31,6 @@ public class EnemySimple : MonoBehaviour
     public float projectileBreakSfxVolume = 1f;
     public AudioClip shootSfx;
     public float shootSfxVolume = 1f;
-    public AudioClip deathSfx;
-    public float deathSfxVolume = 1f;
     public bool useLaserForFlying = true;
     public int laserDamage = 1;
     public float laserWidth = 0.06f;
@@ -453,7 +451,6 @@ public class EnemySimple : MonoBehaviour
                 }
             }
         }
-        if (deathSfx != null) AudioSource.PlayClipAtPoint(deathSfx, transform.position, Mathf.Clamp01(deathSfxVolume));
         if (hpRoot != null) Destroy(hpRoot.gameObject);
         Destroy(gameObject);
     }

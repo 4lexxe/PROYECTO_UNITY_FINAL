@@ -20,29 +20,22 @@ public class EnemySimple : MonoBehaviour
     public float hoverAmplitude = 1.0f;
     public float hoverFrequency = 2.0f;
     public float hoverYOffset = 1.0f;
-    public bool alwaysAggro = true;
     public bool projectileHoming = true;
     public float homingDuration = 3.0f;
     public bool useSimpleProjectile = true;
     public float simpleProjectileLifetime = 4f;
     public float simpleProjectileSize = 0.6f;
     public Color simpleProjectileColor = new Color(1f, 0f, 0f, 1f);
-    public AudioClip projectileBreakSfx;
-    public float projectileBreakSfxVolume = 1f;
-    public AudioClip shootSfx;
-    public float shootSfxVolume = 1f;
-    public AudioClip deathSfx;
-    public float deathSfxVolume = 1f;
     public bool useLaserForFlying = true;
     public int laserDamage = 1;
     public float laserWidth = 0.06f;
     public float laserDuration = 0.2f;
     public Color laserColor = new Color(1f, 0f, 0f, 1f);
-    public float flyHighOffset = 4.0f;
-    public float flyLowOffset = 1.4f;
+    public float flyHighOffset = 3.0f;
+    public float flyLowOffset = 0.8f;
     public bool exaggeratedFlying = true;
-    public float exaggeratedHighOffset = 7.0f;
-    public float exaggeratedLowOffset = 0.8f;
+    public float exaggeratedHighOffset = 6.0f;
+    public float exaggeratedLowOffset = 0.3f;
     public float exaggeratedFrequency = 3.5f;
     public float laserSwitchDistance = 6f;
     public bool laserAtLongRange = true;
@@ -115,7 +108,7 @@ public class EnemySimple : MonoBehaviour
         }
         float dir = Mathf.Sign(target.x - self.x);
         UpdateFacing(dir);
-        if (!alwaysAggro && dist > aggroRange)
+        if (dist > aggroRange)
         {
             if (anim != null && HasParam(speedParamName, AnimatorControllerParameterType.Float)) anim.SetFloat(speedParamName, 0f);
             return;
@@ -202,7 +195,6 @@ public class EnemySimple : MonoBehaviour
             }
         }
         if (projectileHoming && proj != null) StartCoroutine(Homing(proj));
-        if (shootSfx != null) AudioSource.PlayClipAtPoint(shootSfx, origin, Mathf.Clamp01(shootSfxVolume));
         if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
     }
 
@@ -366,8 +358,6 @@ public class EnemySimple : MonoBehaviour
         var dmg = go.AddComponent<ProjectileDamage2D>();
         dmg.damage = projectileDamage;
         dmg.targetTag = "Player";
-        dmg.breakClip = projectileBreakSfx;
-        dmg.breakVolume = projectileBreakSfxVolume;
         Destroy(go, simpleProjectileLifetime);
         return go;
     }
@@ -376,8 +366,6 @@ public class EnemySimple : MonoBehaviour
     {
         public int damage = 1;
         public string targetTag = "Player";
-        public AudioClip breakClip;
-        public float breakVolume = 1f;
         void OnTriggerEnter2D(Collider2D other)
         {
             if (!other.CompareTag(targetTag)) return;
@@ -409,14 +397,6 @@ public class EnemySimple : MonoBehaviour
             main.startColor = col;
             var emission = ps.emission; emission.enabled = true;
             ps.Emit(16);
-            if (breakClip != null)
-            {
-                var src = fx.AddComponent<AudioSource>();
-                src.playOnAwake = false;
-                src.spatialBlend = 0f;
-                src.volume = Mathf.Clamp01(breakVolume);
-                src.PlayOneShot(breakClip, Mathf.Clamp01(breakVolume));
-            }
             Destroy(fx, 0.6f);
         }
     }
@@ -453,7 +433,6 @@ public class EnemySimple : MonoBehaviour
                 }
             }
         }
-        if (deathSfx != null) AudioSource.PlayClipAtPoint(deathSfx, transform.position, Mathf.Clamp01(deathSfxVolume));
         if (hpRoot != null) Destroy(hpRoot.gameObject);
         Destroy(gameObject);
     }

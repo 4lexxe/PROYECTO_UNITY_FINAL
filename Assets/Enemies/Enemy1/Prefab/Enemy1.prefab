@@ -303,27 +303,40 @@ MonoBehaviour:
   hoverAmplitude: 1
   hoverFrequency: 2
   hoverYOffset: 1
+  alwaysAggro: 1
   projectileHoming: 1
   homingDuration: 3
   useSimpleProjectile: 1
   simpleProjectileLifetime: 4
   simpleProjectileSize: 0.6
   simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
-  useLaserForFlying: 1
+  projectileBreakSfx: {fileID: 8300000, guid: c197bde86774a9c4ab8d73a4c57ae499, type: 3}
+  projectileBreakSfxVolume: 1
+  shootSfx: {fileID: 8300000, guid: 3522dfa1931c81e45aec236d5965923f, type: 3}
+  shootSfxVolume: 1
+  deathSfx: {fileID: 8300000, guid: dc02eec29b73e874ab044c13179d60e2, type: 3}
+  deathSfxVolume: 50
+  useLaserForFlying: 0
   laserDamage: 1
   laserWidth: 0.06
   laserDuration: 0.2
   laserColor: {r: 1, g: 0, b: 0, a: 1}
   flyHighOffset: 3
   flyLowOffset: 0.8
+  exaggeratedFlying: 1
+  exaggeratedHighOffset: 6
+  exaggeratedLowOffset: 0.3
+  exaggeratedFrequency: 3.5
   laserSwitchDistance: 6
   laserAtLongRange: 1
   projectileDamage: 1
   maxHealth: 3
   damageFromPlayer: 1
   showHealthBar: 1
-  healthBarSize: {x: 1.2, y: 0.12}
-  healthBarOffset: {x: 0, y: 1.1}
+  healthBarSize: {x: 1, y: 0.1}
+  healthBarOffset: {x: 0.15, y: 1.1}
+  alignHealthBarToCollider: 1
+  healthBarMargin: 0.15
   healthColorFull: {r: 0.1, g: 1, b: 0.1, a: 1}
   healthColorEmpty: {r: 1, g: 0.1, b: 0.1, a: 1}
   healthBackgroundColor: {r: 0, g: 0, b: 0, a: 0.6}

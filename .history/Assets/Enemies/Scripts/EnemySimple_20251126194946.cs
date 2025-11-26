@@ -27,12 +27,6 @@ public class EnemySimple : MonoBehaviour
     public float simpleProjectileLifetime = 4f;
     public float simpleProjectileSize = 0.6f;
     public Color simpleProjectileColor = new Color(1f, 0f, 0f, 1f);
-    public AudioClip projectileBreakSfx;
-    public float projectileBreakSfxVolume = 1f;
-    public AudioClip shootSfx;
-    public float shootSfxVolume = 1f;
-    public AudioClip deathSfx;
-    public float deathSfxVolume = 1f;
     public bool useLaserForFlying = true;
     public int laserDamage = 1;
     public float laserWidth = 0.06f;
@@ -202,7 +196,6 @@ public class EnemySimple : MonoBehaviour
             }
         }
         if (projectileHoming && proj != null) StartCoroutine(Homing(proj));
-        if (shootSfx != null) AudioSource.PlayClipAtPoint(shootSfx, origin, Mathf.Clamp01(shootSfxVolume));
         if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
     }
 
@@ -366,8 +359,6 @@ public class EnemySimple : MonoBehaviour
         var dmg = go.AddComponent<ProjectileDamage2D>();
         dmg.damage = projectileDamage;
         dmg.targetTag = "Player";
-        dmg.breakClip = projectileBreakSfx;
-        dmg.breakVolume = projectileBreakSfxVolume;
         Destroy(go, simpleProjectileLifetime);
         return go;
     }
@@ -376,8 +367,6 @@ public class EnemySimple : MonoBehaviour
     {
         public int damage = 1;
         public string targetTag = "Player";
-        public AudioClip breakClip;
-        public float breakVolume = 1f;
         void OnTriggerEnter2D(Collider2D other)
         {
             if (!other.CompareTag(targetTag)) return;
@@ -409,14 +398,6 @@ public class EnemySimple : MonoBehaviour
             main.startColor = col;
             var emission = ps.emission; emission.enabled = true;
             ps.Emit(16);
-            if (breakClip != null)
-            {
-                var src = fx.AddComponent<AudioSource>();
-                src.playOnAwake = false;
-                src.spatialBlend = 0f;
-                src.volume = Mathf.Clamp01(breakVolume);
-                src.PlayOneShot(breakClip, Mathf.Clamp01(breakVolume));
-            }
             Destroy(fx, 0.6f);
         }
     }
@@ -453,7 +434,6 @@ public class EnemySimple : MonoBehaviour
                 }
             }
         }
-        if (deathSfx != null) AudioSource.PlayClipAtPoint(deathSfx, transform.position, Mathf.Clamp01(deathSfxVolume));
         if (hpRoot != null) Destroy(hpRoot.gameObject);
         Destroy(gameObject);
     }

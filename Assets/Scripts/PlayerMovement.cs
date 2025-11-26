@@ -270,6 +270,8 @@ public class PlayerMovement : MonoBehaviour
             if (h.gameObject == gameObject) continue;
             var es = h.GetComponent<EnemySimple>();
             if (es != null) es.TakeDamage(attackDamage);
+            var proj = h.GetComponent<EnemySimple.ProjectileDamage2D>();
+            if (proj != null) proj.Break();
         }
     }
 
