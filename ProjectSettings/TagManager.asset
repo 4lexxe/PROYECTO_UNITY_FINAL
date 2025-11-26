@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ground
+  - Flying_eye
+  - Goblin
+  - Skeleton
+  - Mushroom
   layers:
   - Default
   - TransparentFX
