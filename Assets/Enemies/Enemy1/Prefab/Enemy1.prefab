@@ -47,9 +47,10 @@ GameObject:
   - component: {fileID: -1151622186891590660}
   - component: {fileID: 230986873019897611}
   - component: {fileID: 4275547029949387867}
+  - component: {fileID: 6985587459987310133}
   m_Layer: 0
   m_Name: Enemy1
-  m_TagString: Untagged
+  m_TagString: Flying_eye
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -188,7 +189,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.5, y: 1.5}
+    oldSize: {x: 0.25, y: 0.23}
     newSize: {x: 1.5, y: 1.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -239,7 +240,7 @@ MonoBehaviour:
   moveSpeed: 2
   stopDistance: 5
   attackCooldown: 2
-  projectilePrefab: {fileID: 2015231011749334166, guid: 755448d8f2956a346804c4a9014fd633, type: 3}
+  projectilePrefab: {fileID: 0}
   shootPoint: {fileID: 146929904296301427}
   projectileSpeed: 10
 --- !u!114 &230986873019897611
@@ -272,3 +273,70 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFloat
   floatAmplitude: 0.3
   floatSpeed: 3
+--- !u!114 &6985587459987310133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6704626237833283523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5f2626273ecc247b44d9c5df1516fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySimple
+  speed: 2
+  aggroRange: 12
+  attackRange: 1.6
+  attackCooldown: 1
+  attackTriggerName: Attack
+  speedParamName: Speed
+  projectilePrefab: {fileID: 2015231011749334166, guid: 688b97075d71d384cb79bd05d7916462, type: 3}
+  firePoint: {fileID: 0}
+  shootRange: 8
+  fireRate: 1.5
+  projectileSpeed: 8
+  fireOffset: {x: 0.5, y: 0.3}
+  projectileScale: 1
+  rotateProjectileToDirection: 1
+  isFlyingType: 1
+  hoverAmplitude: 1
+  hoverFrequency: 2
+  hoverYOffset: 1
+  alwaysAggro: 1
+  projectileHoming: 1
+  homingDuration: 3
+  useSimpleProjectile: 1
+  simpleProjectileLifetime: 4
+  simpleProjectileSize: 0.6
+  simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
+  projectileBreakSfx: {fileID: 8300000, guid: c197bde86774a9c4ab8d73a4c57ae499, type: 3}
+  projectileBreakSfxVolume: 1
+  shootSfx: {fileID: 8300000, guid: 3522dfa1931c81e45aec236d5965923f, type: 3}
+  shootSfxVolume: 1
+  deathSfx: {fileID: 8300000, guid: dc02eec29b73e874ab044c13179d60e2, type: 3}
+  deathSfxVolume: 50
+  useLaserForFlying: 0
+  laserDamage: 1
+  laserWidth: 0.06
+  laserDuration: 0.2
+  laserColor: {r: 1, g: 0, b: 0, a: 1}
+  flyHighOffset: 3
+  flyLowOffset: 0.8
+  exaggeratedFlying: 1
+  exaggeratedHighOffset: 6
+  exaggeratedLowOffset: 0.3
+  exaggeratedFrequency: 3.5
+  laserSwitchDistance: 6
+  laserAtLongRange: 1
+  projectileDamage: 1
+  maxHealth: 3
+  damageFromPlayer: 1
+  showHealthBar: 1
+  healthBarSize: {x: 1, y: 0.1}
+  healthBarOffset: {x: 0.15, y: 1.1}
+  alignHealthBarToCollider: 1
+  healthBarMargin: 0.15
+  healthColorFull: {r: 0.1, g: 1, b: 0.1, a: 1}
+  healthColorEmpty: {r: 1, g: 0.1, b: 0.1, a: 1}
+  healthBackgroundColor: {r: 0, g: 0, b: 0, a: 0.6}

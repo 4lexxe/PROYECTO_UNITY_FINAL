@@ -9,6 +9,10 @@ public class PlayerMovement : MonoBehaviour
     public string attackLeftStateName = "attack_0";
     public string attackRightStateName = "attack_1";
     public bool debugAttack = true;
+    public Vector2 attackBoxSize = new Vector2(1.2f, 0.8f);
+    public Vector2 attackOffset = new Vector2(0.8f, 0.3f);
+    public int attackDamage = 1;
+    public bool attackDamageOnStart = true;
     public string slideStateName = "slide";
     public string slideTrigger = "Slide";
     public float slideDuration = 0.5f;
@@ -228,6 +232,7 @@ public class PlayerMovement : MonoBehaviour
             if (debugAttack) Debug.Log($"CrossFade OK | state:{stateName}");
             attackDurationFromStateSet = false;
             PlayAttackSound(stateName);
+            if (attackDamageOnStart) ApplyMeleeDamage();
             return;
         }
         string trigger = stateName == attackLeftStateName ? "AttackLeft" : "AttackRight";
@@ -240,6 +245,7 @@ public class PlayerMovement : MonoBehaviour
             if (debugAttack) Debug.Log($"Trigger OK | trigger:{trigger} -> state:{stateName}");
             attackDurationFromStateSet = false;
             PlayAttackSound(stateName);
+            if (attackDamageOnStart) ApplyMeleeDamage();
         }
         else
         {
@@ -249,6 +255,23 @@ public class PlayerMovement : MonoBehaviour
             currentAttackStateName = null;
             anim.speed = 1f;
             attackDurationFromStateSet = false;
+        }
+    }
+
+    void ApplyMeleeDamage()
+    {
+        Vector3 origin = transform.position + new Vector3((sr != null && sr.flipX) ? -attackOffset.x : attackOffset.x, attackOffset.y);
+        var hits = Physics2D.OverlapBoxAll(origin, attackBoxSize, 0f);
+        if (hits == null || hits.Length == 0) return;
+        for (int i = 0; i < hits.Length; i++)
+        {
+            var h = hits[i];
+            if (h == null) continue;
+            if (h.gameObject == gameObject) continue;
+            var es = h.GetComponent<EnemySimple>();
+            if (es != null) es.TakeDamage(attackDamage);
+            var proj = h.GetComponent<EnemySimple.ProjectileDamage2D>();
+            if (proj != null) proj.Break();
         }
     }
 
