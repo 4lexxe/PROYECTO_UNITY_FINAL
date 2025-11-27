@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public partial class BossController : MonoBehaviour
+public class BossController : MonoBehaviour
 {
     public float speed = 2.2f;
     public float aggroRange = 18f;
