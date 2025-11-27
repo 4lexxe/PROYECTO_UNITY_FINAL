@@ -39,15 +39,6 @@ public class EnemySimple : MonoBehaviour
     public float bombFuseSeconds = 1.2f;
     public int bombMiniCount = 8;
     public float bombSpeedMultiplier = 0.6f;
-    public float radialRingRadius = 0.8f;
-    public float radialFxDuration = 0.6f;
-    public int explosionFxCount = 32;
-    public float explosionFxSpeed = 4f;
-    public float explosionFxSize = 0.12f;
-    public float explosionFxLifetime = 0.5f;
-    public float explosionFxRadius = 1.2f;
-    public Color explosionFxColor = new Color(1f, 0.6f, 0.2f, 1f);
-    public Color radialFxColor = new Color(1f, 1f, 1f, 0.8f);
     public bool useLaserForFlying = true;
     public int laserDamage = 1;
     public float laserWidth = 0.06f;
@@ -196,24 +187,6 @@ public class EnemySimple : MonoBehaviour
         Vector2 dir = (player.position - origin);
         if (dir.sqrMagnitude < 0.0001f) dir = Vector2.right;
         dir.Normalize();
-        if (attackType == AttackType.MeleeOnly)
-        {
-            return;
-        }
-        if (attackType == AttackType.RadialWave)
-        {
-            ShootRadialWave(origin);
-            if (shootSfx != null) AudioSource.PlayClipAtPoint(shootSfx, origin, Mathf.Clamp01(shootSfxVolume));
-            if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
-            return;
-        }
-        if (attackType == AttackType.Bomb)
-        {
-            ShootBomb(origin, dir);
-            if (shootSfx != null) AudioSource.PlayClipAtPoint(shootSfx, origin, Mathf.Clamp01(shootSfxVolume));
-            if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
-            return;
-        }
         GameObject proj;
         if (useSimpleProjectile || projectilePrefab == null)
         {
@@ -268,51 +241,6 @@ public class EnemySimple : MonoBehaviour
             if (pc != null) pc.RecibirDanio(laserDamage);
         }
         Destroy(go, laserDuration);
-    }
-
-    void ShootRadialWave(Vector3 origin)
-    {
-        int count = Mathf.Max(1, radialCount);
-        SpawnRingFX(origin, radialRingRadius, radialFxColor, radialFxDuration, count);
-        for (int i = 0; i < count; i++)
-        {
-            float ang = (Mathf.PI * 2f) * (i / (float)count);
-            Vector2 d = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
-            Vector3 pos = origin + new Vector3(d.x, d.y, 0f) * radialRingRadius;
-            CreateSimpleProjectile(pos, d);
-        }
-    }
-
-    void ShootBomb(Vector3 origin, Vector2 dir)
-    {
-        var bomb = new GameObject("BombProjectile");
-        bomb.transform.position = origin;
-        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.transform.SetParent(bomb.transform);
-        sphere.transform.localPosition = Vector3.zero;
-        sphere.transform.localScale = Vector3.one * simpleProjectileSize;
-        var mr = sphere.GetComponent<MeshRenderer>();
-        if (mr != null) mr.material.color = simpleProjectileColor;
-        var sc = sphere.GetComponent<SphereCollider>();
-        if (sc != null) Object.Destroy(sc);
-        var col2d = bomb.AddComponent<CircleCollider2D>();
-        col2d.isTrigger = true;
-        col2d.radius = Mathf.Max(0.05f, simpleProjectileSize * 0.5f);
-        var rbp = bomb.AddComponent<Rigidbody2D>();
-        rbp.bodyType = RigidbodyType2D.Dynamic;
-        rbp.gravityScale = 0f;
-        rbp.linearVelocity = dir.normalized * projectileSpeed * bombSpeedMultiplier;
-        if (rotateProjectileToDirection)
-        {
-            float a = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            bomb.transform.rotation = Quaternion.AngleAxis(a, Vector3.forward);
-        }
-        var bb = bomb.AddComponent<BombBehaviour>();
-        bb.owner = this;
-        bb.fuseSeconds = bombFuseSeconds;
-        bb.count = bombMiniCount;
-        bb.breakClip = projectileBreakSfx;
-        bb.breakVolume = projectileBreakSfxVolume;
     }
 
     void InitHealthBar()
@@ -534,72 +462,5 @@ public class EnemySimple : MonoBehaviour
         if (deathSfx != null) AudioSource.PlayClipAtPoint(deathSfx, transform.position, Mathf.Clamp01(deathSfxVolume));
         if (hpRoot != null) Destroy(hpRoot.gameObject);
         Destroy(gameObject);
-    }
-
-    void SpawnRingFX(Vector3 origin, float radius, Color color, float duration, int count)
-    {
-        var fx = new GameObject("RadialRingFX");
-        fx.transform.position = origin;
-        var ps = fx.AddComponent<ParticleSystem>();
-        var main = ps.main;
-        main.loop = false;
-        main.startLifetime = duration;
-        main.startSpeed = 0f;
-        main.startSize = Mathf.Max(0.04f, explosionFxSize * 0.5f);
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startColor = color;
-        var emission = ps.emission; emission.enabled = true;
-        var shape = ps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Circle; shape.radius = radius;
-        ps.Emit(Mathf.Max(1, count));
-        Destroy(fx, duration + 0.2f);
-    }
-
-    public class BombBehaviour : MonoBehaviour
-    {
-        public EnemySimple owner;
-        public float fuseSeconds = 1.2f;
-        public int count = 8;
-        public AudioClip breakClip;
-        public float breakVolume = 1f;
-        void OnEnable()
-        {
-            StartCoroutine(Explode());
-        }
-        System.Collections.IEnumerator Explode()
-        {
-            yield return new WaitForSeconds(fuseSeconds);
-            Vector3 o = transform.position;
-            int c = Mathf.Max(1, count);
-            for (int i = 0; i < c; i++)
-            {
-                float ang = (Mathf.PI * 2f) * (i / (float)c);
-                Vector2 d = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang));
-                if (owner != null) owner.CreateSimpleProjectile(o, d);
-            }
-            if (breakClip != null) AudioSource.PlayClipAtPoint(breakClip, o, Mathf.Clamp01(breakVolume));
-            if (owner != null)
-            {
-                owner.SpawnExplosionFX(o);
-            }
-            Destroy(gameObject);
-        }
-    }
-
-    void SpawnExplosionFX(Vector3 origin)
-    {
-        var fx = new GameObject("ExplosionFX");
-        fx.transform.position = origin;
-        var ps = fx.AddComponent<ParticleSystem>();
-        var main = ps.main;
-        main.loop = false;
-        main.startLifetime = explosionFxLifetime;
-        main.startSpeed = explosionFxSpeed;
-        main.startSize = explosionFxSize;
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startColor = explosionFxColor;
-        var emission = ps.emission; emission.enabled = true;
-        var shape = ps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Circle; shape.radius = explosionFxRadius;
-        ps.Emit(Mathf.Max(1, explosionFxCount));
-        Destroy(fx, explosionFxLifetime + 0.2f);
     }
 }

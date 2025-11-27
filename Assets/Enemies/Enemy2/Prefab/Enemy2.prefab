@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 370177818437580929}
   - component: {fileID: 8314797240833264207}
   - component: {fileID: 8352708768516919762}
+  - component: {fileID: -5594874257942668839}
   m_Layer: 0
   m_Name: Enemy2
   m_TagString: Untagged
@@ -180,7 +181,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.5, y: 1.5}
+    oldSize: {x: 0.33, y: 0.36}
     newSize: {x: 1.5, y: 1.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -188,3 +189,70 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.34, y: 0.35}
   m_EdgeRadius: 0
+--- !u!114 &-5594874257942668839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301424864287753709}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5f2626273ecc247b44d9c5df1516fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySimple
+  speed: 2
+  aggroRange: 12
+  attackRange: 1.6
+  attackCooldown: 1
+  attackTriggerName: Attack
+  speedParamName: Speed
+  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  shootRange: 8
+  fireRate: 1.5
+  projectileSpeed: 6
+  fireOffset: {x: 0.5, y: 0.3}
+  projectileScale: 1
+  rotateProjectileToDirection: 1
+  isFlyingType: 0
+  hoverAmplitude: 1
+  hoverFrequency: 2
+  hoverYOffset: 1
+  alwaysAggro: 1
+  projectileHoming: 1
+  homingDuration: 3
+  useSimpleProjectile: 1
+  simpleProjectileLifetime: 4
+  simpleProjectileSize: 0.6
+  simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
+  projectileBreakSfx: {fileID: 0}
+  projectileBreakSfxVolume: 1
+  shootSfx: {fileID: 0}
+  shootSfxVolume: 1
+  deathSfx: {fileID: 0}
+  deathSfxVolume: 1
+  useLaserForFlying: 1
+  laserDamage: 1
+  laserWidth: 0.06
+  laserDuration: 0.2
+  laserColor: {r: 1, g: 0, b: 0, a: 1}
+  flyHighOffset: 4
+  flyLowOffset: 1.4
+  exaggeratedFlying: 1
+  exaggeratedHighOffset: 7
+  exaggeratedLowOffset: 0.8
+  exaggeratedFrequency: 3.5
+  laserSwitchDistance: 6
+  laserAtLongRange: 1
+  projectileDamage: 1
+  maxHealth: 3
+  damageFromPlayer: 1
+  showHealthBar: 1
+  healthBarSize: {x: 1.2, y: 0.12}
+  healthBarOffset: {x: 0.9, y: 1.1}
+  alignHealthBarToCollider: 1
+  healthBarMargin: 0.15
+  healthColorFull: {r: 0.1, g: 1, b: 0.1, a: 1}
+  healthColorEmpty: {r: 1, g: 0.1, b: 0.1, a: 1}
+  healthBackgroundColor: {r: 0, g: 0, b: 0, a: 0.6}

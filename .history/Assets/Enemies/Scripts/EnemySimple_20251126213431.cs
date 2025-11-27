@@ -577,29 +577,7 @@ public class EnemySimple : MonoBehaviour
                 if (owner != null) owner.CreateSimpleProjectile(o, d);
             }
             if (breakClip != null) AudioSource.PlayClipAtPoint(breakClip, o, Mathf.Clamp01(breakVolume));
-            if (owner != null)
-            {
-                owner.SpawnExplosionFX(o);
-            }
             Destroy(gameObject);
         }
-    }
-
-    void SpawnExplosionFX(Vector3 origin)
-    {
-        var fx = new GameObject("ExplosionFX");
-        fx.transform.position = origin;
-        var ps = fx.AddComponent<ParticleSystem>();
-        var main = ps.main;
-        main.loop = false;
-        main.startLifetime = explosionFxLifetime;
-        main.startSpeed = explosionFxSpeed;
-        main.startSize = explosionFxSize;
-        main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.startColor = explosionFxColor;
-        var emission = ps.emission; emission.enabled = true;
-        var shape = ps.shape; shape.enabled = true; shape.shapeType = ParticleSystemShapeType.Circle; shape.radius = explosionFxRadius;
-        ps.Emit(Mathf.Max(1, explosionFxCount));
-        Destroy(fx, explosionFxLifetime + 0.2f);
     }
 }

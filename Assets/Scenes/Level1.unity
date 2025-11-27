@@ -39407,12 +39407,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SpawnZone
   enemyPrefab: {fileID: 6704626237833283523, guid: 539164b7f65e363428fd34afaa999c3e, type: 3}
   hasSpawned: 0
-  spawnRadius: 7
+  spawnRadius: 15
   horizontalJitter: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   autoIsTrigger: 1
+  totalToSpawn: 5
+  spawnInterval: 5
+  alternateSides: 1
+  startLeft: 1
+  ensureAggro: 1
 --- !u!4 &881924372
 Transform:
   m_ObjectHideFlags: 0
@@ -39422,8 +39427,8 @@ Transform:
   m_GameObject: {fileID: 881924369}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -29.642, y: 0.651, z: -7.017}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -33.88, y: 1.99, z: -7.017}
+  m_LocalScale: {x: 4.0582, y: 4.0582, z: 4.0582}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -61299,7 +61304,7 @@ Transform:
   m_GameObject: {fileID: 1416129235}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -32.318974, y: 0.8174252, z: -7.133066}
+  m_LocalPosition: {x: -38.8, y: 0.8174252, z: -7.133066}
   m_LocalScale: {x: 3.8736253, y: 3.8736253, z: 3.8736253}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -67882,7 +67887,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 16.2, y: -12.1}
+  m_AnchoredPosition: {x: 16.200012, y: -12.099976}
   m_SizeDelta: {x: 209.0883, y: 32.375}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1604989270
@@ -73394,7 +73399,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -12.599976, y: -12.100006}
+  m_AnchoredPosition: {x: -12.599976, y: -12.099976}
   m_SizeDelta: {x: 96.1637, y: 96.1637}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1751514161

@@ -316,6 +316,20 @@ MonoBehaviour:
   shootSfxVolume: 1
   deathSfx: {fileID: 8300000, guid: dc02eec29b73e874ab044c13179d60e2, type: 3}
   deathSfxVolume: 50
+  attackType: 0
+  radialCount: 12
+  bombFuseSeconds: 1.2
+  bombMiniCount: 8
+  bombSpeedMultiplier: 0.6
+  radialRingRadius: 0.8
+  radialFxDuration: 0.6
+  explosionFxCount: 32
+  explosionFxSpeed: 4
+  explosionFxSize: 0.12
+  explosionFxLifetime: 0.5
+  explosionFxRadius: 1.2
+  explosionFxColor: {r: 1, g: 0.6, b: 0.2, a: 1}
+  radialFxColor: {r: 1, g: 1, b: 1, a: 0.8}
   useLaserForFlying: 0
   laserDamage: 1
   laserWidth: 0.06
