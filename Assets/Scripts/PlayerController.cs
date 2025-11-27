@@ -4,6 +4,7 @@ public class PlayerController : MonoBehaviour
 {
     public float vidaMaxima = 5f;
     public float vida;
+    public bool muerto = false;
     public AudioClip damageSfx;
     public float damageSfxVolume = 1f;
     public bool blinkOnDamage = true;
@@ -21,6 +22,16 @@ public class PlayerController : MonoBehaviour
     {
         vida -= cantidad;
         vida = Mathf.Clamp(vida, 0, vidaMaxima);
+        if (vida <= 0 )
+        {
+            muerto = true;
+
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.GameOver();
+            }
+
+        }
         if (damageSfx != null)
         {
             AudioSource.PlayClipAtPoint(damageSfx, transform.position, Mathf.Clamp01(damageSfxVolume));
