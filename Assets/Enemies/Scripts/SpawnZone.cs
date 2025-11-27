@@ -13,6 +13,14 @@ public class SpawnZone : MonoBehaviour
     public bool alternateSides = true;
     public bool startLeft = true;
     public bool ensureAggro = true;
+    public bool isBossZone = false;
+    public GameObject bossPrefab;
+    public float bossSpawnRadius = 8f;
+    public float bossHorizontalJitter = 0.6f;
+    public bool bossStartLeft = true;
+    public bool bossEnsureAggro = true;
+    public bool bossTeleportFromChildren = true;
+    public Transform[] bossTeleportPoints;
 
     void Awake()
     {
@@ -30,7 +38,14 @@ public class SpawnZone : MonoBehaviour
                 return;
             }
             hasSpawned = true;
-            StartCoroutine(SpawnWave(other.transform));
+            if (isBossZone && bossPrefab != null)
+            {
+                SpawnBoss(other.transform);
+            }
+            else
+            {
+                StartCoroutine(SpawnWave(other.transform));
+            }
         }
     }
 
@@ -55,6 +70,44 @@ public class SpawnZone : MonoBehaviour
                 if (es != null) es.alwaysAggro = true;
             }
             if (i < count - 1) yield return new WaitForSeconds(Mathf.Max(0f, spawnInterval));
+        }
+    }
+
+    void SpawnBoss(Transform player)
+    {
+        int side = bossStartLeft ? -1 : 1;
+        Vector3 basePos = player.position + Vector3.right * side * bossSpawnRadius;
+        basePos.x += Random.Range(-bossHorizontalJitter, bossHorizontalJitter);
+        Vector3 spawnPos = basePos;
+        var hit = Physics2D.Raycast(basePos + Vector3.up * 2f, Vector2.down, 20f, groundLayer);
+        if (hit.collider != null) spawnPos.y = hit.point.y;
+        var boss = Instantiate(bossPrefab, spawnPos, Quaternion.identity);
+        if (bossEnsureAggro)
+        {
+            var bc = boss.GetComponent<BossController>();
+            if (bc == null) bc = boss.GetComponentInChildren<BossController>();
+            if (bc != null) bc.alwaysAggro = true;
+        }
+        if (bossTeleportFromChildren)
+        {
+            var bc = boss.GetComponent<BossController>();
+            if (bc == null) bc = boss.GetComponentInChildren<BossController>();
+            if (bc != null)
+            {
+                System.Collections.Generic.List<Transform> pts = new System.Collections.Generic.List<Transform>();
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    var t = transform.GetChild(i);
+                    pts.Add(t);
+                }
+                if (pts.Count > 0) bc.teleportPoints = pts.ToArray();
+            }
+        }
+        else if (bossTeleportPoints != null && bossTeleportPoints.Length > 0)
+        {
+            var bc = boss.GetComponent<BossController>();
+            if (bc == null) bc = boss.GetComponentInChildren<BossController>();
+            if (bc != null) bc.teleportPoints = bossTeleportPoints;
         }
     }
 }

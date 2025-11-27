@@ -242,7 +242,7 @@ MonoBehaviour:
   attackCooldown: 2
   projectilePrefab: {fileID: 0}
   shootPoint: {fileID: 146929904296301427}
-  projectileSpeed: 10
+  projectileSpeed: 5
 --- !u!114 &230986873019897611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,7 +285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c5f2626273ecc247b44d9c5df1516fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySimple
-  speed: 2
+  speed: 0.1
   aggroRange: 12
   attackRange: 1.6
   attackCooldown: 1
@@ -308,16 +308,21 @@ MonoBehaviour:
   homingDuration: 3
   useSimpleProjectile: 1
   simpleProjectileLifetime: 4
-  simpleProjectileSize: 0.6
-  simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
+  simpleProjectileSize: 0.5
+  simpleProjectileColor: {r: 1, g: 0.06640472, b: 0, a: 1}
+  simpleProjectileLight: 1
+  simpleProjectileLightSyncColor: 1
+  simpleProjectileLightColor: {r: 1, g: 1, b: 1, a: 1}
+  simpleProjectileLightIntensity: 50
+  simpleProjectileLightRange: 50
   projectileBreakSfx: {fileID: 8300000, guid: c197bde86774a9c4ab8d73a4c57ae499, type: 3}
   projectileBreakSfxVolume: 1
   shootSfx: {fileID: 8300000, guid: 3522dfa1931c81e45aec236d5965923f, type: 3}
   shootSfxVolume: 1
   deathSfx: {fileID: 8300000, guid: dc02eec29b73e874ab044c13179d60e2, type: 3}
   deathSfxVolume: 50
-  attackType: 0
-  radialCount: 12
+  attackType: 1
+  radialCount: 6
   bombFuseSeconds: 1.2
   bombMiniCount: 8
   bombSpeedMultiplier: 0.6

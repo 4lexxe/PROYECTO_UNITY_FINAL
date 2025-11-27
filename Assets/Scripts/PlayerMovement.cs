@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public Vector2 attackOffset = new Vector2(0.8f, 0.3f);
     public int attackDamage = 1;
     public bool attackDamageOnStart = true;
+    public float attackProjectileBreakWindow = 0.015f;
     public string slideStateName = "slide";
     public string slideTrigger = "Slide";
     public float slideDuration = 0.5f;
@@ -54,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
     private float slideEndTime;
     private int slideDirection;
     private float slideBoost;
+    private float lastAttackChangeTime;
 
     void Start()
     {
@@ -69,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
         col = GetComponent<Collider2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         lastJumpTime = -jumpDuration; // Inicializar para permitir salto inmediato
+        lastAttackChangeTime = -10f;
     }
 
     void Update()
@@ -146,6 +149,7 @@ public class PlayerMovement : MonoBehaviour
                 currentAttackStateName = null;
                 anim.speed = 1f;
                 attackDurationFromStateSet = false;
+                lastAttackChangeTime = Time.time;
             }
             if (isAttacking && isAttackState && !attackDurationFromStateSet)
             {
@@ -161,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
                 currentAttackStateName = null;
                 anim.speed = 1f;
                 attackDurationFromStateSet = false;
+                lastAttackChangeTime = Time.time;
             }
 
             if (isSliding)
@@ -224,6 +229,7 @@ public class PlayerMovement : MonoBehaviour
         }
         attackLock = true;
         isAttacking = true;
+        lastAttackChangeTime = Time.time;
         anim.speed = attackSpeedMultiplier;
         if (TryCrossFade(stateName))
         {
@@ -255,6 +261,7 @@ public class PlayerMovement : MonoBehaviour
             currentAttackStateName = null;
             anim.speed = 1f;
             attackDurationFromStateSet = false;
+            lastAttackChangeTime = Time.time;
         }
     }
 
@@ -270,8 +277,12 @@ public class PlayerMovement : MonoBehaviour
             if (h.gameObject == gameObject) continue;
             var es = h.GetComponent<EnemySimple>();
             if (es != null) es.TakeDamage(attackDamage);
+            var bc = h.GetComponent<BossController>();
+            if (bc != null) bc.TakeDamage(attackDamage);
             var proj = h.GetComponent<EnemySimple.ProjectileDamage2D>();
             if (proj != null) proj.Break();
+            var projBoss = h.GetComponent<BossController.ProjectileDamage2D>();
+            if (projBoss != null) projBoss.Break();
         }
     }
 
@@ -288,7 +299,7 @@ public class PlayerMovement : MonoBehaviour
         return false;
     }
 
-    void StartSlide(int dir)
+    public void StartSlide(int dir)
     {
         if (anim == null || anim.runtimeAnimatorController == null)
         {
@@ -334,6 +345,21 @@ public class PlayerMovement : MonoBehaviour
             if (ps[i].name == param) return true;
         }
         return false;
+    }
+
+    public bool IsAttacking()
+    {
+        if (isAttacking) return true;
+        if (anim == null) return false;
+        var st = anim.GetCurrentAnimatorStateInfo(0);
+        bool isAttackState = st.IsName(attackLeftStateName) || st.IsName(attackRightStateName) || (!string.IsNullOrEmpty(currentAttackStateName) && st.IsName(currentAttackStateName));
+        return isAttackState;
+    }
+
+    public bool IsAttackingForProjectile()
+    {
+        if (IsAttacking()) return true;
+        return (Time.time - lastAttackChangeTime) <= attackProjectileBreakWindow;
     }
 
     void PlayAttackSound(string stateName)

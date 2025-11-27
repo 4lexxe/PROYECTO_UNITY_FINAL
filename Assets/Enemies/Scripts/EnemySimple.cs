@@ -27,13 +27,18 @@ public class EnemySimple : MonoBehaviour
     public float simpleProjectileLifetime = 4f;
     public float simpleProjectileSize = 0.6f;
     public Color simpleProjectileColor = new Color(1f, 0f, 0f, 1f);
+    public bool simpleProjectileLight = true;
+    public bool simpleProjectileLightSyncColor = true;
+    public Color simpleProjectileLightColor = new Color(1f, 0.6f, 0.2f, 1f);
+    public float simpleProjectileLightIntensity = 2f;
+    public float simpleProjectileLightRange = 5f;
     public AudioClip projectileBreakSfx;
     public float projectileBreakSfxVolume = 1f;
     public AudioClip shootSfx;
     public float shootSfxVolume = 1f;
     public AudioClip deathSfx;
     public float deathSfxVolume = 1f;
-    public enum AttackType { Simple, RadialWave, Bomb, MeleeOnly }
+    public enum AttackType { Simple, RadialWave, Bomb, MeleeOnly, Combined }
     public AttackType attackType = AttackType.Simple;
     public int radialCount = 12;
     public float bombFuseSeconds = 1.2f;
@@ -77,7 +82,7 @@ public class EnemySimple : MonoBehaviour
     private SpriteRenderer sr;
     private float lastAttack;
     private float lastShot;
-    private Rigidbody2D rb;
+    private Rigidbody2D rb; 
     private int health;
     private Transform hpRoot;
     private LineRenderer hpBack;
@@ -210,6 +215,26 @@ public class EnemySimple : MonoBehaviour
         if (attackType == AttackType.Bomb)
         {
             ShootBomb(origin, dir);
+            if (shootSfx != null) AudioSource.PlayClipAtPoint(shootSfx, origin, Mathf.Clamp01(shootSfxVolume));
+            if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
+            return;
+        }
+        if (attackType == AttackType.Combined)
+        {
+            int pick = Random.Range(0, 3);
+            if (pick == 0)
+            {
+                GameObject sp = CreateSimpleProjectile(origin, dir);
+                if (projectileHoming && sp != null) StartCoroutine(Homing(sp));
+            }
+            else if (pick == 1)
+            {
+                ShootRadialWave(origin);
+            }
+            else
+            {
+                ShootBomb(origin, dir);
+            }
             if (shootSfx != null) AudioSource.PlayClipAtPoint(shootSfx, origin, Mathf.Clamp01(shootSfxVolume));
             if (anim != null && HasParam("Shoot", AnimatorControllerParameterType.Trigger)) anim.SetTrigger("Shoot");
             return;
@@ -426,15 +451,29 @@ public class EnemySimple : MonoBehaviour
         sphere.transform.localScale = Vector3.one * simpleProjectileSize;
         var mr = sphere.GetComponent<MeshRenderer>();
         if (mr != null) mr.material.color = simpleProjectileColor;
+        if (simpleProjectileLight)
+        {
+            var lightGo = new GameObject("Light");
+            lightGo.transform.SetParent(go.transform);
+            lightGo.transform.localPosition = Vector3.zero;
+            var light = lightGo.AddComponent<Light>();
+            light.type = LightType.Point;
+            Color lc = simpleProjectileLightSyncColor ? (mr != null && mr.material != null ? mr.material.color : simpleProjectileColor) : simpleProjectileLightColor;
+            light.color = lc;
+            light.intensity = simpleProjectileLightIntensity;
+            light.range = simpleProjectileLightRange;
+            light.shadows = LightShadows.None;
+        }
         var sc = sphere.GetComponent<SphereCollider>();
         if (sc != null) Object.Destroy(sc);
         var col2d = go.AddComponent<CircleCollider2D>();
         col2d.isTrigger = true;
-        col2d.radius = Mathf.Max(0.05f, simpleProjectileSize * 0.5f);
+        col2d.radius = Mathf.Max(0.03f, simpleProjectileSize * 0.3f);
         var rbp = go.AddComponent<Rigidbody2D>();
         rbp.bodyType = RigidbodyType2D.Dynamic;
         rbp.gravityScale = 0f;
         rbp.linearVelocity = dir.normalized * projectileSpeed;
+        rbp.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         go.transform.localScale = Vector3.one * simpleProjectileSize;
         if (rotateProjectileToDirection)
         {
@@ -450,25 +489,54 @@ public class EnemySimple : MonoBehaviour
         return go;
     }
 
-    public class ProjectileDamage2D : MonoBehaviour
-    {
-        public int damage = 1;
-        public string targetTag = "Player";
-        public AudioClip breakClip;
-        public float breakVolume = 1f;
-        void OnTriggerEnter2D(Collider2D other)
+        public class ProjectileDamage2D : MonoBehaviour
         {
-            if (!other.CompareTag(targetTag)) return;
-            var pc = other.GetComponent<PlayerController>();
-            if (pc != null) pc.RecibirDanio(damage);
-            Destroy(gameObject);
-        }
+            public int damage = 1;
+            public string targetTag = "Player";
+            public AudioClip breakClip;
+            public float breakVolume = 1f;
+            void OnTriggerEnter2D(Collider2D other)
+            {
+                if (other.CompareTag(targetTag))
+                {
+                    var pm = other.GetComponent<PlayerMovement>();
+                    if (pm == null) pm = other.GetComponentInParent<PlayerMovement>();
+                    if (pm != null && pm.IsAttackingForProjectile())
+                    {
+                        Break();
+                        return;
+                    }
+                    var pc = other.GetComponent<PlayerController>();
+                    if (pc != null) pc.RecibirDanio(damage);
+                    Destroy(gameObject);
+                    return;
+                }
+                var pm2 = other.GetComponentInParent<PlayerMovement>();
+                if (pm2 != null && pm2.IsAttackingForProjectile())
+                {
+                    Break();
+                    return;
+                }
+            }
 
-        public void Break()
-        {
-            SpawnBreakFX();
-            Destroy(gameObject);
-        }
+            void OnTriggerStay2D(Collider2D other)
+            {
+                if (other.CompareTag(targetTag))
+                {
+                    var pm = other.GetComponent<PlayerMovement>();
+                    if (pm == null) pm = other.GetComponentInParent<PlayerMovement>();
+                    if (pm != null && pm.IsAttackingForProjectile())
+                    {
+                        Break();
+                    }
+                }
+            }
+            
+            public void Break()
+            {
+                SpawnBreakFX();
+                Destroy(gameObject);
+            }
 
         void SpawnBreakFX()
         {
