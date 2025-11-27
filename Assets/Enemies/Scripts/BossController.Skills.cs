@@ -96,6 +96,14 @@ public partial class BossController
         if (groundImpactSfx != null) AudioSource.PlayClipAtPoint(groundImpactSfx, player.position, Mathf.Clamp01(groundImpactSfxVolume));
         if (pc != null) pc.RecibirDanio(grabDropDamage);
         SpawnExplosionFX(player.position);
+        if (impactCameraShake)
+        {
+            var shakeGo = new GameObject("CameraShakeOnImpact");
+            var shaker = shakeGo.AddComponent<CameraShakeDuringDeath>();
+            shaker.duration = Mathf.Max(0f, impactCameraShakeDuration);
+            shaker.amplitude = impactCameraShakeAmplitude;
+            shaker.frequency = impactCameraShakeFrequency;
+        }
         if (pm != null) pm.enabled = true;
         if (rbp != null) rbp.constraints = orig;
         if (pm != null)

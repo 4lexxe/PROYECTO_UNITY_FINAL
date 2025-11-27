@@ -55,6 +55,7 @@ public class EnemySimple : MonoBehaviour
     public Color radialFxColor = new Color(1f, 1f, 1f, 0.8f);
     public bool useLaserForFlying = true;
     public int laserDamage = 1;
+    public int meleeDamage = 1;
     public float laserWidth = 0.06f;
     public float laserDuration = 0.2f;
     public Color laserColor = new Color(1f, 0f, 0f, 1f);
@@ -157,6 +158,9 @@ public class EnemySimple : MonoBehaviour
             if (anim != null && HasParam(attackTriggerName, AnimatorControllerParameterType.Trigger)) anim.SetTrigger(attackTriggerName);
             lastAttack = Time.time;
             if (anim != null && HasParam(speedParamName, AnimatorControllerParameterType.Float)) anim.SetFloat(speedParamName, 0f);
+            var pc = player != null ? player.GetComponent<PlayerController>() : null;
+            if (pc == null && player != null) pc = player.GetComponentInParent<PlayerController>();
+            if (pc != null) pc.RecibirDanio(meleeDamage);
             if (dist <= shootRange && Time.time - lastShot >= fireRate)
             {
                 ShootAtPlayer();
@@ -174,6 +178,35 @@ public class EnemySimple : MonoBehaviour
             {
                 if (anim != null) anim.SetTrigger(attackTriggerName);
                 lastAttack = Time.time;
+                var pc = other.GetComponent<PlayerController>();
+                if (pc == null) pc = other.GetComponentInParent<PlayerController>();
+                if (pc != null) pc.RecibirDanio(meleeDamage);
+            }
+            var pa = player.GetComponentInChildren<Animator>();
+            if (pa != null)
+            {
+                var st = pa.GetCurrentAnimatorStateInfo(0);
+                bool playerIsAttacking = st.IsName("attack_0") || st.IsName("attack_1");
+                if (playerIsAttacking)
+                {
+                    TakeDamage(damageFromPlayer);
+                }
+            }
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (player == null) return;
+        if (other.CompareTag("Player"))
+        {
+            if (Time.time - lastAttack >= attackCooldown)
+            {
+                if (anim != null) anim.SetTrigger(attackTriggerName);
+                lastAttack = Time.time;
+                var pc = other.GetComponent<PlayerController>();
+                if (pc == null) pc = other.GetComponentInParent<PlayerController>();
+                if (pc != null) pc.RecibirDanio(meleeDamage);
             }
             var pa = player.GetComponentInChildren<Animator>();
             if (pa != null)

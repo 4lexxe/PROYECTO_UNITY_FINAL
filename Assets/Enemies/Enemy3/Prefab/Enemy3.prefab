@@ -203,14 +203,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySimple
   speed: 2
   aggroRange: 12
-  attackRange: 1.6
+  attackRange: 5
   attackCooldown: 1
   attackTriggerName: Attack
   speedParamName: Speed
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
   shootRange: 8
-  fireRate: 1.5
+  fireRate: 5
   projectileSpeed: 6
   fireOffset: {x: 0.5, y: 0.3}
   projectileScale: 1
@@ -226,6 +226,11 @@ MonoBehaviour:
   simpleProjectileLifetime: 4
   simpleProjectileSize: 0.6
   simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
+  simpleProjectileLight: 1
+  simpleProjectileLightSyncColor: 1
+  simpleProjectileLightColor: {r: 1, g: 0.6, b: 0.2, a: 1}
+  simpleProjectileLightIntensity: 2
+  simpleProjectileLightRange: 5
   projectileBreakSfx: {fileID: 0}
   projectileBreakSfxVolume: 1
   shootSfx: {fileID: 0}
@@ -248,6 +253,7 @@ MonoBehaviour:
   radialFxColor: {r: 1, g: 1, b: 1, a: 0.8}
   useLaserForFlying: 1
   laserDamage: 1
+  meleeDamage: 1
   laserWidth: 0.06
   laserDuration: 0.2
   laserColor: {r: 1, g: 0, b: 0, a: 1}

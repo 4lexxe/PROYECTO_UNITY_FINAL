@@ -100,6 +100,10 @@ public partial class BossController : MonoBehaviour
     public float deathCameraShakeAmplitude = 0.25f;
     public float deathCameraShakeFrequency = 60f;
     public float deathCameraShakeDuration = 7f;
+    public bool impactCameraShake = true;
+    public float impactCameraShakeAmplitude = 0.22f;
+    public float impactCameraShakeFrequency = 60f;
+    public float impactCameraShakeDuration = 0.4f;
 
     private Transform player;
     private Animator anim;

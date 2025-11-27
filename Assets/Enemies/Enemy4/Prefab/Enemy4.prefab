@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3478805955263752004}
   - component: {fileID: 8899845926215841119}
   - component: {fileID: 7070431687792020328}
+  - component: {fileID: 4496298136382333052}
   m_Layer: 0
   m_Name: Enemy4
   m_TagString: Untagged
@@ -180,7 +181,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.5, y: 1.5}
+    oldSize: {x: 0.54, y: 0.54}
     newSize: {x: 1.5, y: 1.5}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -188,3 +189,90 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.45, y: 0.45}
   m_EdgeRadius: 0
+--- !u!114 &4496298136382333052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5593474788124387298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c5f2626273ecc247b44d9c5df1516fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySimple
+  speed: 2
+  aggroRange: 12
+  attackRange: 1.1
+  attackCooldown: 1
+  attackTriggerName: Attack
+  speedParamName: Speed
+  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  shootRange: 8
+  fireRate: 1
+  projectileSpeed: 6
+  fireOffset: {x: 0.5, y: 0.3}
+  projectileScale: 1
+  rotateProjectileToDirection: 1
+  isFlyingType: 0
+  hoverAmplitude: 1
+  hoverFrequency: 2
+  hoverYOffset: 1
+  alwaysAggro: 1
+  projectileHoming: 1
+  homingDuration: 3
+  useSimpleProjectile: 1
+  simpleProjectileLifetime: 4
+  simpleProjectileSize: 0.6
+  simpleProjectileColor: {r: 1, g: 0, b: 0, a: 1}
+  simpleProjectileLight: 1
+  simpleProjectileLightSyncColor: 1
+  simpleProjectileLightColor: {r: 1, g: 0.6, b: 0.2, a: 1}
+  simpleProjectileLightIntensity: 2
+  simpleProjectileLightRange: 5
+  projectileBreakSfx: {fileID: 0}
+  projectileBreakSfxVolume: 1
+  shootSfx: {fileID: 0}
+  shootSfxVolume: 1
+  deathSfx: {fileID: 0}
+  deathSfxVolume: 1
+  attackType: 3
+  radialCount: 12
+  bombFuseSeconds: 1.2
+  bombMiniCount: 8
+  bombSpeedMultiplier: 0.6
+  radialRingRadius: 0.8
+  radialFxDuration: 0.6
+  explosionFxCount: 32
+  explosionFxSpeed: 4
+  explosionFxSize: 0.12
+  explosionFxLifetime: 0.5
+  explosionFxRadius: 1.2
+  explosionFxColor: {r: 1, g: 0.6, b: 0.2, a: 1}
+  radialFxColor: {r: 1, g: 1, b: 1, a: 0.8}
+  useLaserForFlying: 0
+  laserDamage: 1
+  meleeDamage: 1
+  laserWidth: 0.06
+  laserDuration: 0.2
+  laserColor: {r: 1, g: 0, b: 0, a: 1}
+  flyHighOffset: 4
+  flyLowOffset: 1.4
+  exaggeratedFlying: 1
+  exaggeratedHighOffset: 7
+  exaggeratedLowOffset: 0.8
+  exaggeratedFrequency: 3.5
+  laserSwitchDistance: 6
+  laserAtLongRange: 1
+  projectileDamage: 1
+  maxHealth: 3
+  damageFromPlayer: 1
+  showHealthBar: 1
+  healthBarSize: {x: 1.2, y: 0.12}
+  healthBarOffset: {x: 0.9, y: 1.1}
+  alignHealthBarToCollider: 1
+  healthBarMargin: 0.15
+  healthColorFull: {r: 0.1, g: 1, b: 0.1, a: 1}
+  healthColorEmpty: {r: 1, g: 0.1, b: 0.1, a: 1}
+  healthBackgroundColor: {r: 0, g: 0, b: 0, a: 0.6}
