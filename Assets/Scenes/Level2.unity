@@ -52354,7 +52354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: maxHealth
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: aggroRange
@@ -76037,7 +76037,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1856661159
 RectTransform:
   m_ObjectHideFlags: 0
