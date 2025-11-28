@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public partial class BossController : MonoBehaviour
 {
@@ -369,9 +369,17 @@ public partial class BossController : MonoBehaviour
         if (hpRoot != null) Object.Destroy(hpRoot.gameObject);
         if (ambientSrc != null) ambientSrc.Stop();
         if (ambientGo != null) Object.Destroy(ambientGo);
+
+        // LLAMAR A LA VICTORIA
+        if (GameManager.instance != null)
+            GameManager.instance.Victory();
+
         SpawnDeathFX(transform.position);
+
+        // Destruir al jefe después
         Object.Destroy(gameObject);
     }
+
 
 
 
