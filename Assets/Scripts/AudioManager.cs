@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class AudioManager : MonoBehaviour
         }
         _instance = this;
         DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
         if (musicSource == null)
         {
             musicSource = gameObject.AddComponent<AudioSource>();
@@ -92,5 +94,19 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
         source.volume = targetVolume;
+    }
+
+    void OnSceneLoaded(Scene s, LoadSceneMode m)
+    {
+        if (musicSource != null)
+        {
+            musicSource.volume = Mathf.Clamp01(musicVolume);
+            if (!musicSource.isPlaying && defaultMusic != null) PlayMusic(defaultMusic, musicVolume, true);
+        }
+        if (ambientSource != null)
+        {
+            ambientSource.volume = Mathf.Clamp01(ambientVolume);
+            if (!ambientSource.isPlaying && defaultAmbient != null) PlayAmbient(defaultAmbient, ambientVolume, true);
+        }
     }
 }

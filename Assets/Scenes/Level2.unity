@@ -52350,7 +52350,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: grabRange
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: maxHealth
@@ -52358,7 +52358,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: aggroRange
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: attackType
@@ -52390,7 +52390,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 76c9b87bdfb283f4ea45870a0dda5a29, type: 3}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: attackCooldown
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: deathFXColor.b
@@ -52417,8 +52417,12 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
+      propertyPath: skill1Cooldown
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: teleportRadius
-      value: 1
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1348170615393138780, guid: c2e4162194920d24abe12f2cb52b2d0e, type: 3}
       propertyPath: deathFXDuration
