@@ -112,6 +112,10 @@ public class EnemySimple : MonoBehaviour
     void Update()
     {
         if (player == null) return;
+        if (GameManager.instance != null && GameManager.instance.IsGameOver()) return;
+        var pcCheck = player.GetComponent<PlayerController>();
+        if (pcCheck == null) pcCheck = player.GetComponentInParent<PlayerController>();
+        if (pcCheck != null && pcCheck.muerto) return;
         if (showHealthBar && alignHealthBarToCollider) UpdateHealthBarPosition();
         Vector3 self = transform.position;
         float dist = Vector2.Distance(self, player.position);
@@ -172,6 +176,10 @@ public class EnemySimple : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (player == null) return;
+        if (GameManager.instance != null && GameManager.instance.IsGameOver()) return;
+        var pcCheck = player.GetComponent<PlayerController>();
+        if (pcCheck == null) pcCheck = player.GetComponentInParent<PlayerController>();
+        if (pcCheck != null && pcCheck.muerto) return;
         if (other.CompareTag("Player"))
         {
             if (Time.time - lastAttack >= attackCooldown)
@@ -198,6 +206,10 @@ public class EnemySimple : MonoBehaviour
     void OnTriggerStay2D(Collider2D other)
     {
         if (player == null) return;
+        if (GameManager.instance != null && GameManager.instance.IsGameOver()) return;
+        var pcCheck = player.GetComponent<PlayerController>();
+        if (pcCheck == null) pcCheck = player.GetComponentInParent<PlayerController>();
+        if (pcCheck != null && pcCheck.muerto) return;
         if (other.CompareTag("Player"))
         {
             if (Time.time - lastAttack >= attackCooldown)

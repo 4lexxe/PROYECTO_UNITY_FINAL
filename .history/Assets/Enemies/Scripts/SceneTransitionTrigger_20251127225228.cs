@@ -29,7 +29,6 @@ public class SceneTransitionTrigger : MonoBehaviour
         if (!other.CompareTag(playerTag)) return;
         if (useOverlayTransition)
         {
-            DontDestroyOnLoad(gameObject);
             StartCoroutine(TransitionAndLoad());
         }
         else
@@ -187,7 +186,6 @@ public class SceneTransitionTrigger : MonoBehaviour
         }
         var c3 = img.color; c3.a = 0f; img.color = c3;
         Object.Destroy(overlayRoot);
-        Destroy(gameObject);
     }
     void OnSceneLoadedResetPlayer(Scene s, LoadSceneMode m)
     {

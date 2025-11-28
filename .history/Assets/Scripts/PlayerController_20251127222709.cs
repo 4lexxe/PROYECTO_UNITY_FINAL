@@ -13,11 +13,6 @@ public class PlayerController : MonoBehaviour
     public bool disableMovementOnDeath = true;
     public string deathStateName = "Death";
     public string deathTriggerName = "Death";
-    public bool spawnDeathLight = true;
-    public float deathLightIntensity = 4f;
-    public float deathLightRange = 10f;
-    public float deathLightDuration = 1.5f;
-    public float deathGameOverDelay = 5f;
     private bool _blinking;
     private float _blinkEnd;
     private Animator _anim;
@@ -65,33 +60,6 @@ public class PlayerController : MonoBehaviour
                         }
                     }
                 }
-                if (!done && !string.IsNullOrEmpty(deathStateName))
-                {
-                    _anim.Play(deathStateName, 0, 0f);
-                }
-                _anim.SetFloat("Speed", 0f);
-                _anim.SetBool("isJumping", false);
-                for (int i = 0; i < _anim.parameterCount; i++)
-                {
-                    var p = _anim.parameters[i];
-                    if (p.type == AnimatorControllerParameterType.Bool && p.name == "Dead")
-                    {
-                        _anim.SetBool("Dead", true);
-                        break;
-                    }
-                }
-            }
-            if (spawnDeathLight)
-            {
-                var go = new GameObject("DeathLight");
-                go.transform.position = transform.position;
-                var light = go.AddComponent<Light>();
-                light.type = LightType.Point;
-                light.color = Color.white;
-                light.intensity = deathLightIntensity;
-                light.range = deathLightRange;
-                light.shadows = LightShadows.None;
-                Destroy(go, Mathf.Max(0.1f, deathLightDuration));
             }
 
             if (GameManager.instance != null)
@@ -148,7 +116,14 @@ public class PlayerController : MonoBehaviour
             if (!string.IsNullOrEmpty(deathStateName) && st.IsName(deathStateName)) break;
             yield return null;
         }
-        yield return new WaitForSeconds(Mathf.Max(0f, deathGameOverDelay));
+        float waitFinishTimeout = 4.0f;
+        float endFinish = Time.time + waitFinishTimeout;
+        while (Time.time < endFinish)
+        {
+            var st = _anim.GetCurrentAnimatorStateInfo(0);
+            if (!string.IsNullOrEmpty(deathStateName) && st.IsName(deathStateName) && st.normalizedTime >= 1f) break;
+            yield return null;
+        }
         GameManager.instance.GameOver();
     }
 }

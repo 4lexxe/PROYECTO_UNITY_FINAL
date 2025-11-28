@@ -5,7 +5,6 @@ public partial class BossController : MonoBehaviour
     public float speed = 2.2f;
     public float aggroRange = 18f;
     public float attackRange = 2.2f;
-    public float grabRange = 2.2f;
     public float attackCooldown = 1.5f;
     public float skill1Cooldown = 6f;
     public string attackTriggerName = "Attack";
@@ -78,6 +77,7 @@ public partial class BossController : MonoBehaviour
     public int damageFromPlayer = 1;
     public float teleportOnDamageCooldown = 0.5f;
     public float grabCooldown = 8f;
+    public float grabRange = 3.5f;
     public float grabLiftHeight = 6f;
     public float grabLiftDuration = 0.8f;
     public float grabHoldSeconds = 0.2f;

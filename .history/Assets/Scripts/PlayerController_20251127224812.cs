@@ -65,21 +65,6 @@ public class PlayerController : MonoBehaviour
                         }
                     }
                 }
-                if (!done && !string.IsNullOrEmpty(deathStateName))
-                {
-                    _anim.Play(deathStateName, 0, 0f);
-                }
-                _anim.SetFloat("Speed", 0f);
-                _anim.SetBool("isJumping", false);
-                for (int i = 0; i < _anim.parameterCount; i++)
-                {
-                    var p = _anim.parameters[i];
-                    if (p.type == AnimatorControllerParameterType.Bool && p.name == "Dead")
-                    {
-                        _anim.SetBool("Dead", true);
-                        break;
-                    }
-                }
             }
             if (spawnDeathLight)
             {

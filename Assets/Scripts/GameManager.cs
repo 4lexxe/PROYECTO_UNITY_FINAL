@@ -70,6 +70,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public bool IsGameOver()
+    {
+        return gameOverActivo;
+    }
+
     public void ReiniciarEscena()
     {
         Time.timeScale = 1.0f;

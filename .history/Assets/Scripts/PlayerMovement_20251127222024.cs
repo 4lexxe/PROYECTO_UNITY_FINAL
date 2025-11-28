@@ -76,18 +76,6 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        var pc = GetComponent<PlayerController>();
-        if (pc == null) pc = GetComponentInParent<PlayerController>();
-        if ((GameManager.instance != null && GameManager.instance.IsGameOver()) || (pc != null && pc.muerto))
-        {
-            moveX = 0f;
-            if (anim != null)
-            {
-                anim.SetFloat("Speed", 0f);
-                anim.SetBool("isJumping", false);
-            }
-            return;
-        }
 
         moveX = Input.GetAxisRaw("Horizontal");
         if (moveX > 0) sr.flipX = false;
@@ -203,13 +191,6 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        var pc = GetComponent<PlayerController>();
-        if (pc == null) pc = GetComponentInParent<PlayerController>();
-        if ((GameManager.instance != null && GameManager.instance.IsGameOver()) || (pc != null && pc.muerto))
-        {
-            rb.linearVelocity = new Vector2(0f, rb.linearVelocity.y);
-            return;
-        }
         float targetSpeed = (isGrounded || runFullSpeedInAir) ? speed : speed * airControlFactor;
         float moveH;
         if (attackLock)
