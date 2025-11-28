@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI gameOverText;
     public Button reiniciarBoton;
     public Button menuBoton;
+    public GameObject panelVictoria;
 
     private bool gameOverActivo = false;
 
@@ -30,11 +31,14 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
 
+        if (panelVictoria != null)
+            panelVictoria.SetActive(false);
+
         if (reiniciarBoton != null)
             reiniciarBoton.onClick.AddListener(ReiniciarEscena);
 
         if (menuBoton != null)
-            menuBoton.onClick.AddListener(IrAlMenu);
+            menuBoton.onClick.AddListener(IrAlMenu);    
     }
 
     // Update is called once per frame
@@ -52,6 +56,17 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    public void Victory()
+    {
+        gameOverActivo = true;
+
+        if (panelVictoria != null)
+            panelVictoria.SetActive(true);
+
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false); // por si estaba visible
+    }
+
 
     public void GameOver()
     {
