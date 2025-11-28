@@ -22,8 +22,6 @@ public class GameManager : MonoBehaviour
     public Color victoryDirectionalColor = Color.white;
     public bool fadeVictoryLight = true;
     public float victoryLightFadeSeconds = 1.5f;
-    public bool showVictoryPanel = true;
-    public float victoryPanelDelaySeconds = 15f;
     private bool victoryApplied = false;
 
     private bool gameOverActivo = false;
@@ -71,17 +69,15 @@ public class GameManager : MonoBehaviour
     }
     public void Victory()
     {
-        if (panelVictoria != null) panelVictoria.SetActive(false);
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (panelVictoria != null)
+            panelVictoria.SetActive(false);
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
 
         if (applyVictoryEnvironment && !victoryApplied)
         {
             ApplyVictoryEnvironment();
             victoryApplied = true;
-        }
-        if (showVictoryPanel)
-        {
-            StartCoroutine(ShowVictoryPanelDelayed());
         }
     }
 
@@ -180,12 +176,5 @@ public class GameManager : MonoBehaviour
         }
         l.color = toColor;
         l.intensity = toIntensity;
-    }
-
-    IEnumerator ShowVictoryPanelDelayed()
-    {
-        float d = Mathf.Max(0f, victoryPanelDelaySeconds);
-        yield return new WaitForSeconds(d);
-        if (panelVictoria != null) panelVictoria.SetActive(true);
     }
 }
